@@ -3,670 +3,413 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BMF Cleaning — รายงานยอดขาย มิถุนายน 2569</title>
+<title>BMF Cleaning — รายงานยอดขาย ก.พ.–มิ.ย. 2569</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --teal-dark:  #0a5c47;
-    --teal-mid:   #1a8c6a;
-    --teal-light: #2db88a;
-    --teal-pale:  #e8f7f2;
-    --amber:      #e8a020;
-    --amber-pale: #fef7e8;
-    --red:        #d94040;
-    --red-pale:   #fdf0f0;
-    --gray-900:   #1a1a1a;
-    --gray-700:   #4a4a4a;
-    --gray-500:   #888;
-    --gray-200:   #e8e8e8;
-    --gray-100:   #f5f5f5;
-    --white:      #ffffff;
-    --font:       'Sarabun', sans-serif;
-  }
-
-  body {
-    font-family: var(--font);
-    background: var(--gray-100);
-    color: var(--gray-900);
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-
-  /* Header */
-  .site-header {
-    background: var(--teal-dark);
-    color: white;
-    padding: 16px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-  .site-header .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .site-header .logo-badge {
-    background: var(--teal-light);
-    color: white;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-  }
-  .site-header h1 {
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-  }
-  .site-header .period {
-    font-size: 12px;
-    opacity: 0.75;
-    margin-top: 1px;
-  }
-  .header-right {
-    font-size: 12px;
-    opacity: 0.7;
-    text-align: right;
-  }
-
-  /* Layout */
-  .main { max-width: 1280px; margin: 0 auto; padding: 20px 20px 40px; }
-
-  /* Filter bar */
-  .filter-bar {
-    background: white;
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    padding: 12px 16px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  .filter-bar label {
-    font-size: 12px;
-    color: var(--gray-500);
-    font-weight: 500;
-  }
-  .filter-bar select {
-    font-family: var(--font);
-    font-size: 13px;
-    padding: 6px 10px;
-    border: 1px solid var(--gray-200);
-    border-radius: 6px;
-    background: var(--gray-100);
-    color: var(--gray-900);
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .filter-bar select:focus { border-color: var(--teal-light); }
-  .filter-sep { width: 1px; height: 24px; background: var(--gray-200); }
-  .filter-reset {
-    margin-left: auto;
-    font-size: 12px;
-    color: var(--teal-mid);
-    cursor: pointer;
-    text-decoration: underline;
-    background: none;
-    border: none;
-    font-family: var(--font);
-  }
-
-  /* KPI grid */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .kpi-card {
-    background: white;
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    padding: 14px 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--teal-light);
-  }
-  .kpi-card.warn::before { background: var(--amber); }
-  .kpi-card.alert::before { background: var(--red); }
-  .kpi-label {
-    font-size: 11px;
-    color: var(--gray-500);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-bottom: 6px;
-  }
-  .kpi-value {
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--gray-900);
-    line-height: 1.1;
-  }
-  .kpi-unit {
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--gray-500);
-    margin-left: 3px;
-  }
-  .kpi-sub {
-    font-size: 11px;
-    color: var(--gray-500);
-    margin-top: 4px;
-  }
-
-  /* Charts row */
-  .charts-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  .chart-col-right {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  /* Cards */
-  .card {
-    background: white;
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    padding: 16px;
-  }
-  .card-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .card-title .badge {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 12px;
-    font-weight: 600;
-    letter-spacing: 0;
-    text-transform: none;
-  }
-  .badge-green { background: var(--teal-pale); color: var(--teal-dark); }
-  .badge-red   { background: var(--red-pale);  color: var(--red); }
-  .badge-amber { background: var(--amber-pale); color: #9a6010; }
-
-  /* Legend */
-  .legend {
-    display: flex;
-    gap: 14px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    color: var(--gray-700);
-  }
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-
-  /* Contribute ring */
-  .ring-wrap {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .ring-stats {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .ring-stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-  }
-  .ring-stat-label { color: var(--gray-700); }
-  .ring-stat-val { font-weight: 600; }
-
-  /* Bottom tables */
-  .bottom-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  .table-scroll { max-height: 320px; overflow-y: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  thead th {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    padding: 6px 8px;
-    border-bottom: 1.5px solid var(--gray-200);
-    background: white;
-    position: sticky;
-    top: 0;
-    text-align: left;
-  }
-  thead th.r { text-align: right; }
-  tbody td {
-    padding: 7px 8px;
-    border-bottom: 1px solid var(--gray-200);
-    color: var(--gray-900);
-    vertical-align: middle;
-  }
-  tbody td.r { text-align: right; color: var(--gray-700); }
-  tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: var(--gray-100); }
-  .branch-name { max-width: 180px; line-height: 1.3; }
-  .pill {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 10px;
-  }
-  .pill-red   { background: var(--red-pale);   color: var(--red); }
-  .pill-green { background: var(--teal-pale);  color: var(--teal-dark); }
-  .pill-amber { background: var(--amber-pale); color: #9a6010; }
-
-  /* Progress bar */
-  .prog-wrap { width: 60px; background: var(--gray-200); border-radius: 3px; height: 5px; display: inline-block; vertical-align: middle; margin-right: 4px; }
-  .prog-bar  { height: 5px; border-radius: 3px; background: var(--teal-light); }
-  .prog-bar.over { background: var(--amber); }
-
-  /* Rank */
-  .rank { width: 18px; height: 18px; border-radius: 50%; background: var(--teal-pale); color: var(--teal-dark); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
-
-  /* Footer */
-  .footer { text-align: center; font-size: 11px; color: var(--gray-500); margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--gray-200); }
-
-  @media (max-width: 900px) {
-    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
-    .charts-row { grid-template-columns: 1fr; }
-    .bottom-row { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 600px) {
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --td:#0a5c47;--tm:#1a8c6a;--tl:#2db88a;--tp:#e8f7f2;
+  --am:#e8a020;--ap:#fef7e8;--rd:#d94040;--rp:#fdf0f0;
+  --pu:#6b4fbb;--pp:#f0ecfb;--pl:#afa9ec;
+  --g9:#1a1a1a;--g7:#4a4a4a;--g5:#888;--g2:#e8e8e8;--g1:#f5f5f5;
+}
+body{font-family:'Sarabun',sans-serif;background:var(--g1);color:var(--g9);font-size:14px;line-height:1.5}
+.hdr{background:var(--td);color:white;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.logo{display:flex;align-items:center;gap:10px}
+.lb{background:var(--tl);color:white;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px}
+.ht{font-size:15px;font-weight:600}
+.hs{font-size:11px;opacity:.7;margin-top:1px}
+.hr{font-size:11px;opacity:.7;text-align:right}
+.main{max-width:1300px;margin:0 auto;padding:18px 18px 40px}
+.fb{background:white;border:1px solid var(--g2);border-radius:10px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.fb label{font-size:12px;color:var(--g5);font-weight:500}
+.fb select{font-family:'Sarabun',sans-serif;font-size:12px;padding:5px 8px;border:1px solid var(--g2);border-radius:6px;background:var(--g1);color:var(--g9);cursor:pointer;outline:none}
+.pt{display:flex;gap:6px}
+.ptb{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--g2);background:white;color:var(--g7);font-family:'Sarabun',sans-serif}
+.aa{background:var(--ap);border-color:var(--am);color:#9a6010}
+.ap{background:var(--pp);border-color:var(--pu);color:var(--pu)}
+.ac{background:var(--tp);border-color:var(--tm);color:var(--td)}
+.sep{width:1px;height:22px;background:var(--g2)}
+.rst{margin-left:auto;font-size:12px;color:var(--tm);cursor:pointer;background:none;border:none;font-family:'Sarabun',sans-serif;text-decoration:underline}
+.kg{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
+.kc{background:white;border:1px solid var(--g2);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tl)}
+.kc.w::before{background:var(--am)}
+.kc.a::before{background:var(--rd)}
+.kc.p::before{background:var(--pu)}
+.kc.b::before{background:#378ADD}
+.kl{font-size:10px;color:var(--g5);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.kv{font-size:22px;font-weight:600;color:var(--g9);line-height:1.1}
+.ku{font-size:11px;font-weight:400;color:var(--g5);margin-left:2px}
+.ks{font-size:11px;color:var(--g5);margin-top:3px}
+.ct{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.cm{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.cr2{display:flex;flex-direction:column;gap:14px}
+.card{background:white;border:1px solid var(--g2);border-radius:10px;padding:14px}
+.ctit{font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.bdg{font-size:10px;padding:2px 7px;border-radius:12px;font-weight:600;text-transform:none}
+.bg{background:var(--tp);color:var(--td)}
+.br{background:var(--rp);color:var(--rd)}
+.ba{background:var(--ap);color:#9a6010}
+.leg{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--g7)}
+.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.brow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.frow{margin-bottom:14px}
+.tsc{max-height:300px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{font-size:10px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.3px;padding:5px 7px;border-bottom:1.5px solid var(--g2);background:white;position:sticky;top:0;text-align:left}
+thead th.r{text-align:right}
+tbody td{padding:6px 7px;border-bottom:1px solid var(--g2);color:var(--g9);vertical-align:middle}
+tbody td.r{text-align:right;color:var(--g7)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--g1)}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px}
+.pg{background:var(--tp);color:var(--td)}
+.pr{background:var(--rp);color:var(--rd)}
+.pa{background:var(--ap);color:#9a6010}
+.rnk{width:18px;height:18px;border-radius:50%;background:var(--tp);color:var(--td);font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.mu{color:#0a5c47;font-weight:600}
+.md{color:var(--rd);font-weight:600}
+.mn{color:var(--g5)}
+.cbw{display:inline-flex;align-items:center;gap:4px}
+.cbb{width:40px;height:5px;background:var(--g2);border-radius:3px;display:inline-block}
+.cbf{height:5px;border-radius:3px;background:var(--tl)}
+.rw{display:flex;align-items:center;gap:14px}
+.rs{flex:1;display:flex;flex-direction:column;gap:7px}
+.rr{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.ft{text-align:center;font-size:11px;color:var(--g5);margin-top:28px;padding-top:14px;border-top:1px solid var(--g2)}
+@media(max-width:1000px){.kg{grid-template-columns:repeat(3,1fr)}.ct,.cm,.brow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<header class="site-header">
-  <div class="logo">
-    <span class="logo-badge">BMF</span>
-    <div>
-      <h1>รายงานยอดขายบริการล้างห้องเครื่อง</h1>
-      <div class="period">1 – 21 มิถุนายน 2569</div>
-    </div>
-  </div>
-  <div class="header-right">
-    อัปเดตล่าสุด: 21 มิ.ย. 2569<br>
-    ข้อมูล: 55 สาขา
-  </div>
+<header class="hdr">
+  <div class="logo"><span class="lb">BMF</span><div><div class="ht">รายงานยอดขายบริการล้างห้องเครื่อง</div><div class="hs">กุมภาพันธ์ – มิถุนายน 2569 · Pilot & Current Phase</div></div></div>
+  <div class="hr">ข้อมูล 5 เดือน · 55 สาขา</div>
 </header>
-
 <main class="main">
 
-  <!-- Filters -->
-  <div class="filter-bar">
-    <label>AM</label>
-    <select id="fAM" onchange="render()">
-      <option value="">ทั้งหมด</option>
-      <option>นายณฤพนธ์ บุญเกื้อกุลวงษ์</option>
-      <option>นายนพพล ฤกษ์ประเสริฐกุล</option>
-      <option>นายบุญยวัฒน์ พุฒิเมธาพงศ์</option>
-      <option>นายปัญญากร รังษีธนะไพศาล</option>
-      <option>นายวิญญ์ วีรานุกูล</option>
-      <option>นายศุภณัฐ ปานเรือง</option>
-      <option>นายอัยยรัช สอดส่อง</option>
-      <option>นายอาทิตย์ จันทรี</option>
-      <option>นายเธียรวิชญ์ สิงหพันธุ์</option>
-    </select>
-    <div class="filter-sep"></div>
-    <label>ภาค</label>
-    <select id="fRegion" onchange="render()">
-      <option value="">ทั้งหมด</option>
-      <option>กรุงเทพฯ และปริมณฑล</option>
-      <option>ภาคกลาง</option>
-      <option>ภาคตะวันออก</option>
-      <option>ภาคตะวันออกเฉียงเหนือ</option>
-      <option>ภาคเหนือ</option>
-      <option>ภาคใต้</option>
-    </select>
-    <div class="filter-sep"></div>
-    <label>แสดง</label>
-    <select id="fShow" onchange="render()">
-      <option value="all">ทุกสาขา</option>
-      <option value="contrib">มียอดขาย</option>
-      <option value="noncontrib">ไม่มียอดขาย</option>
-    </select>
-    <button class="filter-reset" onclick="resetFilters()">ล้างตัวกรอง</button>
+<div class="fb">
+  <label>Phase</label>
+  <div class="pt">
+    <button class="ptb aa" id="tabAll" onclick="setPhase('all')">ทั้งหมด</button>
+    <button class="ptb" id="tabPilot" onclick="setPhase('pilot')">Pilot (ก.พ.–พ.ค.)</button>
+    <button class="ptb" id="tabCurrent" onclick="setPhase('current')">Current (มิ.ย.)</button>
   </div>
+  <div class="sep"></div>
+  <label>เดือน</label>
+  <select id="fMonth" onchange="render()">
+    <option value="">ทุกเดือน</option>
+    <option value="2026-02">ก.พ. 69</option><option value="2026-03">มี.ค. 69</option>
+    <option value="2026-04">เม.ย. 69</option><option value="2026-05">พ.ค. 69</option>
+    <option value="2026-06">มิ.ย. 69</option>
+  </select>
+  <div class="sep"></div>
+  <label>AM</label>
+  <select id="fAM" onchange="render()">
+    <option value="">ทั้งหมด</option>
+    <option>นายณฤพนธ์ บุญเกื้อกุลวงษ์</option><option>นายนพพล ฤกษ์ประเสริฐกุล</option>
+    <option>นายบุญยวัฒน์ พุฒิเมธาพงศ์</option><option>นายปัญญากร รังษีธนะไพศาล</option>
+    <option>นายวิญญ์ วีรานุกูล</option><option>นายศุภณัฐ ปานเรือง</option>
+    <option>นายอัยยรัช สอดส่อง</option><option>นายอาทิตย์ จันทรี</option>
+    <option>นายเธียรวิชญ์ สิงหพันธุ์</option>
+  </select>
+  <label>ภาค</label>
+  <select id="fRegion" onchange="render()">
+    <option value="">ทั้งหมด</option>
+    <option>กรุงเทพฯ และปริมณฑล</option><option>ภาคกลาง</option>
+    <option>ภาคตะวันออก</option><option>ภาคตะวันออกเฉียงเหนือ</option>
+    <option>ภาคเหนือ</option><option>ภาคใต้</option>
+  </select>
+  <button class="rst" onclick="resetFilters()">ล้างตัวกรอง</button>
+</div>
 
-  <!-- KPI -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">ยอดขาย (บาท)</div>
-      <div class="kpi-value" id="kRev">—</div>
-      <div class="kpi-sub">รวมทุกสาขาที่เลือก</div>
+<div class="kg">
+  <div class="kc"><div class="kl">ยอดขาย (บาท)</div><div class="kv" id="kRev">—</div><div class="ks">รวมทุกสาขา</div></div>
+  <div class="kc"><div class="kl">จำนวนชิ้น</div><div class="kv" id="kQty">—</div><div class="ks" id="kQtySub">—</div></div>
+  <div class="kc w"><div class="kl">สาขาที่ขายได้</div><div class="kv" id="kContrib">—</div><div class="ks" id="kContribSub">—</div></div>
+  <div class="kc a"><div class="kl">ไม่มียอดขาย</div><div class="kv" id="kNC">—</div><div class="ks" id="kNCSub">—</div></div>
+  <div class="kc b"><div class="kl">Avg Conversion Rate</div><div class="kv" id="kCR">—<span class="ku">%</span></div><div class="ks">ยอดขาย ÷ Ticket</div></div>
+  <div class="kc p"><div class="kl">MoM เดือนล่าสุด</div><div class="kv" id="kMoM">—</div><div class="ks" id="kMoMSub">—</div></div>
+</div>
+
+<div class="ct">
+  <div class="card">
+    <div class="ctit">แนวโน้มยอดขายรายเดือน (ชิ้น)</div>
+    <div class="leg">
+      <span class="li"><span class="ld" style="background:#afa9ec"></span>Pilot 150ml</span>
+      <span class="li"><span class="ld" style="background:#7F77DD"></span>Pilot 500ml</span>
+      <span class="li"><span class="ld" style="background:#5DCAA5"></span>Current 150ml</span>
+      <span class="li"><span class="ld" style="background:#0F6E56"></span>Current 500ml</span>
+      <span class="li"><span style="display:inline-block;width:18px;height:2px;background:#BA7517;vertical-align:middle;margin-right:2px"></span>ยอดรวม</span>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">จำนวนชิ้น</div>
-      <div class="kpi-value" id="kQty">—<span class="kpi-unit">ชิ้น</span></div>
-      <div class="kpi-sub" id="kQtySub">150ml + 500ml</div>
-    </div>
-    <div class="kpi-card warn">
-      <div class="kpi-label">สาขาที่ขายได้</div>
-      <div class="kpi-value" id="kContrib">—</div>
-      <div class="kpi-sub" id="kContribSub">—</div>
-    </div>
-    <div class="kpi-card alert">
-      <div class="kpi-label">ไม่มียอดขาย</div>
-      <div class="kpi-value" id="kNonContrib">—</div>
-      <div class="kpi-sub" id="kNonContribSub">—</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Avg ยอดขาย / สาขา</div>
-      <div class="kpi-value" id="kAvg">—<span class="kpi-unit">฿</span></div>
-      <div class="kpi-sub">เฉพาะสาขาที่มียอด</div>
-    </div>
+    <div style="position:relative;height:210px"><canvas id="trendChart" role="img" aria-label="กราฟแนวโน้มยอดขาย">ก.พ.: 48, มี.ค.: 202, เม.ย.: 71, พ.ค.: 343, มิ.ย.: 313 ชิ้น</canvas></div>
   </div>
+  <div class="card">
+    <div class="ctit">MoM % เปลี่ยนแปลง vs เดือนก่อน</div>
+    <div style="position:relative;height:230px"><canvas id="momChart" role="img" aria-label="MoM %">มี.ค.+321%, เม.ย.-65%, พ.ค.+383%, มิ.ย.-9%</canvas></div>
+  </div>
+</div>
 
-  <!-- Charts row -->
-  <div class="charts-row">
-    <!-- Bar chart top 15 -->
+<div class="cm">
+  <div class="card">
+    <div class="ctit">Top 15 สาขา ยอดขายสูงสุด <span class="bdg bg" id="branchCount">—</span></div>
+    <div class="leg">
+      <span class="li"><span class="ld" style="background:#5DCAA5"></span>150 ml.</span>
+      <span class="li"><span class="ld" style="background:#0F6E56"></span>500 ml.</span>
+    </div>
+    <div style="position:relative;height:340px"><canvas id="barChart" role="img" aria-label="ยอดขายรายสาขา"></canvas></div>
+  </div>
+  <div class="cr2">
     <div class="card">
-      <div class="card-title">
-        ยอดขายรายสาขา (Top 15)
-        <span class="badge badge-green" id="branchCount">—</span>
-      </div>
-      <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:#2db88a"></span>150 ml.</span>
-        <span class="legend-item"><span class="legend-dot" style="background:#0a5c47"></span>500 ml.</span>
-      </div>
-      <div style="position:relative;height:360px">
-        <canvas id="barChart" role="img" aria-label="กราฟแท่งแนวนอนยอดขายรายสาขา"></canvas>
-      </div>
-    </div>
-
-    <div class="chart-col-right">
-      <!-- Doughnut -->
-      <div class="card">
-        <div class="card-title">สัดส่วนสินค้า</div>
-        <div class="ring-wrap">
-          <div style="position:relative;width:110px;height:110px;flex-shrink:0">
-            <canvas id="donutChart" role="img" aria-label="กราฟวงกลมสัดส่วนสินค้า"></canvas>
-          </div>
-          <div class="ring-stats">
-            <div class="ring-stat-row">
-              <span class="ring-stat-label">🟢 150 ml.</span>
-              <span class="ring-stat-val" id="p150pct">—</span>
-            </div>
-            <div class="ring-stat-row">
-              <span class="ring-stat-label">🟩 500 ml.</span>
-              <span class="ring-stat-val" id="p500pct">—</span>
-            </div>
-            <div style="border-top:1px solid var(--gray-200);margin-top:4px;padding-top:6px">
-              <div class="ring-stat-row">
-                <span class="ring-stat-label" style="font-size:11px">150 ml. (ชิ้น)</span>
-                <span style="font-size:12px;font-weight:600" id="p150qty">—</span>
-              </div>
-              <div class="ring-stat-row">
-                <span class="ring-stat-label" style="font-size:11px">500 ml. (ชิ้น)</span>
-                <span style="font-size:12px;font-weight:600" id="p500qty">—</span>
-              </div>
-            </div>
+      <div class="ctit">สัดส่วนสินค้า</div>
+      <div class="rw">
+        <div style="position:relative;width:100px;height:100px;flex-shrink:0"><canvas id="donutChart" role="img" aria-label="สัดส่วน 150/500ml"></canvas></div>
+        <div class="rs">
+          <div class="rr"><span style="color:var(--g7)">150 ml.</span><span style="font-weight:600" id="p150pct">—</span></div>
+          <div class="rr"><span style="color:var(--g7)">500 ml.</span><span style="font-weight:600" id="p500pct">—</span></div>
+          <div style="border-top:1px solid var(--g2);margin-top:4px;padding-top:6px">
+            <div class="rr"><span style="font-size:11px;color:var(--g5)">150 ml.</span><span style="font-size:12px;font-weight:600" id="p150qty">—</span></div>
+            <div class="rr"><span style="font-size:11px;color:var(--g5)">500 ml.</span><span style="font-size:12px;font-weight:600" id="p500qty">—</span></div>
           </div>
         </div>
       </div>
-
-      <!-- Region bar -->
-      <div class="card">
-        <div class="card-title">ยอดขายตามภาค (บาท)</div>
-        <div style="position:relative;height:160px">
-          <canvas id="regionChart" role="img" aria-label="กราฟแท่งยอดขายตามภาค"></canvas>
-        </div>
-      </div>
+    </div>
+    <div class="card">
+      <div class="ctit">ยอดขายตามภาค (บาท)</div>
+      <div style="position:relative;height:150px"><canvas id="regionChart" role="img" aria-label="ยอดขายตามภาค"></canvas></div>
     </div>
   </div>
+</div>
 
-  <!-- Bottom tables -->
-  <div class="bottom-row">
-    <!-- Top branches table -->
-    <div class="card">
-      <div class="card-title">
-        สาขายอดขายสูงสุด
-        <span class="badge badge-green" id="topCount">—</span>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:24px">#</th>
-              <th>สาขา</th>
-              <th class="r">vs Target</th>
-              <th class="r">ชิ้น</th>
-              <th class="r">ยอดขาย</th>
-            </tr>
-          </thead>
-          <tbody id="topTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Non-contribute table -->
-    <div class="card">
-      <div class="card-title">
-        สาขาไม่มียอดขาย
-        <span class="badge badge-red" id="ncCount">—</span>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>สาขา</th>
-              <th>AM</th>
-              <th class="r">Ticket</th>
-              <th class="r">สถานะ</th>
-            </tr>
-          </thead>
-          <tbody id="ncTable"></tbody>
-        </table>
-      </div>
+<div class="frow">
+  <div class="card">
+    <div class="ctit">Conversion Rate & MoM รายสาขา <span class="bdg bg" id="crCount">—</span></div>
+    <div class="tsc">
+      <table>
+        <thead><tr><th>#</th><th>สาขา</th><th>AM</th><th class="r">Ticket</th><th class="r">ชิ้น</th><th class="r">Conversion Rate</th><th class="r">MoM vs เดือนก่อน</th><th class="r">ยอดขาย (฿)</th></tr></thead>
+        <tbody id="crTable"></tbody>
+      </table>
     </div>
   </div>
+</div>
 
-  <div class="footer">BMF Cleaning Dashboard · FIT Auto · ข้อมูล 1–21 มิ.ย. 2569 · สร้างโดย Claude AI</div>
+<div class="frow">
+  <div class="card">
+    <div class="ctit">สาขาไม่มียอดขาย <span class="bdg br" id="ncCount">—</span></div>
+    <div class="tsc">
+      <table>
+        <thead><tr><th>สาขา</th><th>AM</th><th class="r">Ticket</th><th class="r">สถานะ</th></tr></thead>
+        <tbody id="ncTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="ft">BMF Cleaning Dashboard · FIT Auto · ก.พ.–มิ.ย. 2569 · สร้างโดย Claude AI</div>
 </main>
 
 <script>
-const ALL = [{"plant":"L219","name":"ลาดพร้าว71","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":169,"total_qty":5,"total_rev":2295,"qty150":1,"qty500":4,"rev150":299,"rev500":1996,"target":15,"has_sell":1},{"plant":"L220","name":"สนามเป้า","AM":"นายนพพล ฤกษ์ประเสริฐกุล","region":"กรุงเทพฯ และปริมณฑล","ticket":273,"total_qty":16,"total_rev":5984,"qty150":10,"qty500":6,"rev150":2990,"rev500":2994,"target":15,"has_sell":1},{"plant":"L222","name":"กาญจนาภิเษก-ตลิ่งชัน","AM":"นายปัญญากร รังษีธนะไพศาล","region":"กรุงเทพฯ และปริมณฑล","ticket":432,"total_qty":5,"total_rev":2095,"qty150":2,"qty500":3,"rev150":598,"rev500":1497,"target":15,"has_sell":1},{"plant":"L225","name":"The Crystal","AM":"นายณฤพนธ์ บุญเกื้อกุลวงษ์","region":"กรุงเทพฯ และปริมณฑล","ticket":242,"total_qty":1,"total_rev":299,"qty150":1,"qty500":0,"rev150":299,"rev500":0,"target":15,"has_sell":1},{"plant":"L226","name":"บางพูน-ปทุมธานี","AM":"นายบุญยวัฒน์ พุฒิเมธาพงศ์","region":"กรุงเทพฯ และปริมณฑล","ticket":182,"total_qty":14,"total_rev":6186,"qty150":4,"qty500":10,"rev150":1196,"rev500":4990,"target":15,"has_sell":1},{"plant":"L228","name":"ชลบุรี-บ้านบึง 3","AM":"นายวิญญ์ วีรานุกูล","region":"ภาคตะวันออก","ticket":290,"total_qty":12,"total_rev":5188,"qty150":4,"qty500":8,"rev150":1196,"rev500":3992,"target":15,"has_sell":1},{"plant":"L230","name":"แม่สอด-ตาก","AM":"นายณฤพนธ์ บุญเกื้อกุลวงษ์","region":"ภาคเหนือ","ticket":297,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0},{"plant":"L231","name":"สิริสมเกียรติ-อุดรฯ","AM":"นายอาทิตย์ จันทรี","region":"ภาคตะวันออกเฉียงเหนือ","ticket":307,"total_qty":11,"total_rev":5489,"qty150":0,"qty500":11,"rev150":0,"rev500":5489,"target":15,"has_sell":1},{"plant":"L233","name":"ถ.สะพานนนฯ-บางบัวทอง","AM":"นายณฤพนธ์ บุญเกื้อกุลวงษ์","region":"กรุงเทพฯ และปริมณฑล","ticket":191,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0},{"plant":"L236","name":"กรุงเทพฯ-พหลฯ กม.27 แถวดอนเมือง","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":266,"total_qty":2,"total_rev":998,"qty150":0,"qty500":2,"rev150":0,"rev500":998,"target":15,"has_sell":1},{"plant":"L238","name":"เมืองนครราชสีมา","AM":"นายอาทิตย์ จันทรี","region":"ภาคตะวันออกเฉียงเหนือ","ticket":338,"total_qty":13,"total_rev":6287,"qty150":1,"qty500":12,"rev150":299,"rev500":5988,"target":15,"has_sell":1},{"plant":"L240","name":"เมืองเชียงใหม่-ท่าศาลา","AM":"นายณฤพนธ์ บุญเกื้อกุลวงษ์","region":"ภาคเหนือ","ticket":273,"total_qty":1,"total_rev":499,"qty150":0,"qty500":1,"rev150":0,"rev500":499,"target":15,"has_sell":1},{"plant":"L241","name":"ภูเก็ต","AM":"นายบุญยวัฒน์ พุฒิเมธาพงศ์","region":"ภาคใต้","ticket":222,"total_qty":4,"total_rev":1796,"qty150":1,"qty500":3,"rev150":299,"rev500":1497,"target":15,"has_sell":1},{"plant":"L242","name":"บางทราย","AM":"นายอัยยรัช สอดส่อง","region":"ภาคตะวันออก","ticket":211,"total_qty":8,"total_rev":3992,"qty150":0,"qty500":8,"rev150":0,"rev500":3992,"target":15,"has_sell":1},{"plant":"L243","name":"โรงแยกก๊าซระยอง","AM":"นายวิญญ์ วีรานุกูล","region":"ภาคตะวันออก","ticket":317,"total_qty":8,"total_rev":3992,"qty150":0,"qty500":8,"rev150":0,"rev500":3992,"target":15,"has_sell":1},{"plant":"L252","name":"บุรีรัมย์","AM":"นายอาทิตย์ จันทรี","region":"ภาคตะวันออกเฉียงเหนือ","ticket":193,"total_qty":13,"total_rev":6487,"qty150":0,"qty500":13,"rev150":0,"rev500":6487,"target":15,"has_sell":1},{"plant":"L254","name":"บรมราชชนนี(ขาเข้า)","AM":"นายปัญญากร รังษีธนะไพศาล","region":"กรุงเทพฯ และปริมณฑล","ticket":238,"total_qty":3,"total_rev":1497,"qty150":0,"qty500":3,"rev150":0,"rev500":1497,"target":15,"has_sell":1},{"plant":"L255","name":"คลองหลวง กม.6","AM":"นายบุญยวัฒน์ พุฒิเมธาพงศ์","region":"กรุงเทพฯ และปริมณฑล","ticket":173,"total_qty":2,"total_rev":798,"qty150":1,"qty500":1,"rev150":299,"rev500":499,"target":15,"has_sell":1},{"plant":"L256","name":"กล้วยน้ำไท","AM":"นายนพพล ฤกษ์ประเสริฐกุล","region":"กรุงเทพฯ และปริมณฑล","ticket":194,"total_qty":8,"total_rev":3992,"qty150":0,"qty500":8,"rev150":0,"rev500":3992,"target":15,"has_sell":1},{"plant":"L259","name":"ลาดพร้าว-วังหิน","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":208,"total_qty":5,"total_rev":2495,"qty150":0,"qty500":5,"rev150":0,"rev500":2495,"target":15,"has_sell":1},{"plant":"L262","name":"ราชบุรี - บ้านโป่ง","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"ภาคกลาง","ticket":157,"total_qty":3,"total_rev":1497,"qty150":0,"qty500":3,"rev150":0,"rev500":1497,"target":15,"has_sell":1},{"plant":"L264","name":"ศรีราชา","AM":"นายวิญญ์ วีรานุกูล","region":"ภาคตะวันออก","ticket":305,"total_qty":1,"total_rev":499,"qty150":0,"qty500":1,"rev150":0,"rev500":499,"target":15,"has_sell":1},{"plant":"L267","name":"ประชาอุทิศ ลาดพร้าว","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":206,"total_qty":7,"total_rev":3493,"qty150":0,"qty500":7,"rev150":0,"rev500":3493,"target":15,"has_sell":1},{"plant":"L268","name":"ท่าเรือแหลมฉบัง","AM":"นายวิญญ์ วีรานุกูล","region":"ภาคตะวันออก","ticket":184,"total_qty":2,"total_rev":798,"qty150":1,"qty500":1,"rev150":299,"rev500":499,"target":15,"has_sell":1},{"plant":"L269","name":"นิคมอีสเทิร์นซีบอร์ด","AM":"นายวิญญ์ วีรานุกูล","region":"ภาคตะวันออก","ticket":178,"total_qty":10,"total_rev":4790,"qty150":1,"qty500":9,"rev150":299,"rev500":4491,"target":15,"has_sell":1},{"plant":"L271","name":"พุทธมณฑลสาย 4","AM":"นายปัญญากร รังษีธนะไพศาล","region":"กรุงเทพฯ และปริมณฑล","ticket":240,"total_qty":1,"total_rev":499,"qty150":0,"qty500":1,"rev150":0,"rev500":499,"target":15,"has_sell":1},{"plant":"L274","name":"หนองคาย","AM":"นายอาทิตย์ จันทรี","region":"ภาคตะวันออกเฉียงเหนือ","ticket":270,"total_qty":12,"total_rev":5988,"qty150":0,"qty500":12,"rev150":0,"rev500":5988,"target":15,"has_sell":1},{"plant":"L276","name":"พิษณุโลก","AM":"นายณฤพนธ์ บุญเกื้อกุลวงษ์","region":"ภาคเหนือ","ticket":207,"total_qty":3,"total_rev":1497,"qty150":0,"qty500":3,"rev150":0,"rev500":1497,"target":15,"has_sell":1},{"plant":"L277","name":"ท่ามะขาม","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"ภาคกลาง","ticket":183,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0},{"plant":"L279","name":"เพชรเกษม-อ้อมน้อย","AM":"นายปัญญากร รังษีธนะไพศาล","region":"กรุงเทพฯ และปริมณฑล","ticket":195,"total_qty":2,"total_rev":998,"qty150":0,"qty500":2,"rev150":0,"rev500":998,"target":15,"has_sell":1},{"plant":"L281","name":"เมืองขอนแก่น 2","AM":"นายอาทิตย์ จันทรี","region":"ภาคตะวันออกเฉียงเหนือ","ticket":300,"total_qty":26,"total_rev":9774,"qty150":16,"qty500":10,"rev150":4784,"rev500":4990,"target":15,"has_sell":1},{"plant":"L283","name":"มีนบุรี","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":277,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0},{"plant":"L284","name":"ราชพฤกษ์-กัลปพฤกษ์","AM":"นายปัญญากร รังษีธนะไพศาล","region":"กรุงเทพฯ และปริมณฑล","ticket":239,"total_qty":5,"total_rev":2295,"qty150":1,"qty500":4,"rev150":299,"rev500":1996,"target":15,"has_sell":1},{"plant":"L285","name":"ชะอำ","AM":"นายบุญยวัฒน์ พุฒิเมธาพงศ์","region":"ภาคกลาง","ticket":262,"total_qty":5,"total_rev":2295,"qty150":1,"qty500":4,"rev150":299,"rev500":1996,"target":15,"has_sell":1},{"plant":"L286","name":"พหลโยธิน กม.25","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":209,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0},{"plant":"L288","name":"เมืองสุพรรณบุรี","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"ภาคกลาง","ticket":264,"total_qty":13,"total_rev":5687,"qty150":4,"qty500":9,"rev150":1196,"rev500":4491,"target":15,"has_sell":1},{"plant":"L290","name":"โลตัส สุพรรณบุรี","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"ภาคกลาง","ticket":152,"total_qty":4,"total_rev":1996,"qty150":0,"qty500":4,"rev150":0,"rev500":1996,"target":15,"has_sell":1},{"plant":"L292","name":"แยกปทุมธานี 1","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"กรุงเทพฯ และปริมณฑล","ticket":235,"total_qty":1,"total_rev":499,"qty150":0,"qty500":1,"rev150":0,"rev500":499,"target":15,"has_sell":1},{"plant":"L298","name":"วิภาวดี","AM":"นายนพพล ฤกษ์ประเสริฐกุล","region":"กรุงเทพฯ และปริมณฑล","ticket":299,"total_qty":4,"total_rev":1996,"qty150":0,"qty500":4,"rev150":0,"rev500":1996,"target":15,"has_sell":1},{"plant":"L300","name":"รังสิต-คลอง3","AM":"นายบุญยวัฒน์ พุฒิเมธาพงศ์","region":"กรุงเทพฯ และปริมณฑล","ticket":340,"total_qty":2,"total_rev":798,"qty150":1,"qty500":1,"rev150":299,"rev500":499,"target":15,"has_sell":1},{"plant":"L302","name":"กาญจนาภิเษก-บางบัวทอง","AM":"นายณฤพนธ์ บุญเกื้อกุลวงษ์","region":"กรุงเทพฯ และปริมณฑล","ticket":253,"total_qty":6,"total_rev":2994,"qty150":0,"qty500":6,"rev150":0,"rev500":2994,"target":15,"has_sell":1},{"plant":"L306","name":"ลำลูกกาคลอง 4","AM":"นายบุญยวัฒน์ พุฒิเมธาพงศ์","region":"กรุงเทพฯ และปริมณฑล","ticket":277,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0},{"plant":"L308","name":"พัฒนาการ","AM":"นายอัยยรัช สอดส่อง","region":"กรุงเทพฯ และปริมณฑล","ticket":200,"total_qty":4,"total_rev":1996,"qty150":0,"qty500":4,"rev150":0,"rev500":1996,"target":15,"has_sell":1},{"plant":"L309","name":"นครปฐม","AM":"นายปัญญากร รังษีธนะไพศาล","region":"กรุงเทพฯ และปริมณฑล","ticket":201,"total_qty":4,"total_rev":1996,"qty150":0,"qty500":4,"rev150":0,"rev500":1996,"target":15,"has_sell":1},{"plant":"L312","name":"เมืองมหาสารคาม","AM":"นายอาทิตย์ จันทรี","region":"ภาคตะวันออกเฉียงเหนือ","ticket":220,"total_qty":1,"total_rev":499,"qty150":0,"qty500":1,"rev150":0,"rev500":499,"target":15,"has_sell":1},{"plant":"L319","name":"จรัญสนิทวงศ์ 77","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"กรุงเทพฯ และปริมณฑล","ticket":171,"total_qty":4,"total_rev":1996,"qty150":0,"qty500":4,"rev150":0,"rev500":1996,"target":15,"has_sell":1},{"plant":"L323","name":"ราชพฤกษ์ – สวนผัก","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"กรุงเทพฯ และปริมณฑล","ticket":181,"total_qty":4,"total_rev":1996,"qty150":0,"qty500":4,"rev150":0,"rev500":1996,"target":15,"has_sell":1},{"plant":"L325","name":"กาญจนาภิเษก - บางใหญ่","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"กรุงเทพฯ และปริมณฑล","ticket":150,"total_qty":2,"total_rev":998,"qty150":0,"qty500":2,"rev150":0,"rev500":998,"target":15,"has_sell":1},{"plant":"L326","name":"ตลาดหนองบัว-เมืองอุดรธานี","AM":"นายอาทิตย์ จันทรี","region":"ภาคตะวันออกเฉียงเหนือ","ticket":275,"total_qty":38,"total_rev":12962,"qty150":30,"qty500":8,"rev150":8970,"rev500":3992,"target":15,"has_sell":1},{"plant":"L327","name":"วิภาวดี 62","AM":"นายอัยยรัช สอดส่อง","region":"กรุงเทพฯ และปริมณฑล","ticket":236,"total_qty":1,"total_rev":499,"qty150":0,"qty500":1,"rev150":0,"rev500":499,"target":15,"has_sell":1},{"plant":"L330","name":"สายไหม 56","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":202,"total_qty":6,"total_rev":2994,"qty150":0,"qty500":6,"rev150":0,"rev500":2994,"target":15,"has_sell":1},{"plant":"L331","name":"รามอินทรา กม.3","AM":"นายศุภณัฐ ปานเรือง","region":"กรุงเทพฯ และปริมณฑล","ticket":190,"total_qty":2,"total_rev":998,"qty150":0,"qty500":2,"rev150":0,"rev500":998,"target":15,"has_sell":1},{"plant":"L334","name":"แยกเนินสำลี","AM":"นายวิญญ์ วีรานุกูล","region":"ภาคตะวันออก","ticket":210,"total_qty":9,"total_rev":2891,"qty150":8,"qty500":1,"rev150":2392,"rev500":499,"target":15,"has_sell":1},{"plant":"L336","name":"กะทู้ 2","AM":"นายบุญยวัฒน์ พุฒิเมธาพงศ์","region":"ภาคใต้","ticket":166,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0},{"plant":"L338","name":"แยกพงษ์เพชร","AM":"นายเธียรวิชญ์ สิงหพันธุ์","region":"กรุงเทพฯ และปริมณฑล","ticket":113,"total_qty":0,"total_rev":0,"qty150":0,"qty500":0,"rev150":0,"rev500":0,"target":15,"has_sell":0}];
+const ALL=[{"plant": "L219", "name": "ลาดพร้าว71", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 102, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L219", "name": "ลาดพร้าว71", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 261, "total_qty": 15, "total_rev": 5685, "qty150": 9, "qty500": 6, "rev150": 2691, "rev500": 2994, "target": 15, "has_sell": 1, "cr": 5.7, "mom": null}, {"plant": "L219", "name": "ลาดพร้าว71", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 210, "total_qty": 5, "total_rev": 1495, "qty150": 5, "qty500": 0, "rev150": 1495, "rev500": 0, "target": 15, "has_sell": 1, "cr": 2.4, "mom": -66.7}, {"plant": "L219", "name": "ลาดพร้าว71", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 234, "total_qty": 15, "total_rev": 5285, "qty150": 11, "qty500": 4, "rev150": 3289, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 6.4, "mom": 200.0}, {"plant": "L219", "name": "ลาดพร้าว71", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 169, "total_qty": 5, "total_rev": 2295, "qty150": 1, "qty500": 4, "rev150": 299, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 3.0, "mom": -66.7}, {"plant": "L220", "name": "สนามเป้า", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 177, "total_qty": 2, "total_rev": 798, "qty150": 1, "qty500": 1, "rev150": 299, "rev500": 499, "target": 15, "has_sell": 1, "cr": 1.1, "mom": null}, {"plant": "L220", "name": "สนามเป้า", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 384, "total_qty": 2, "total_rev": 798, "qty150": 1, "qty500": 1, "rev150": 299, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.5, "mom": 0.0}, {"plant": "L220", "name": "สนามเป้า", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 391, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L220", "name": "สนามเป้า", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 407, "total_qty": 17, "total_rev": 7083, "qty150": 7, "qty500": 10, "rev150": 2093, "rev500": 4990, "target": 15, "has_sell": 1, "cr": 4.2, "mom": null}, {"plant": "L220", "name": "สนามเป้า", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 273, "total_qty": 16, "total_rev": 5984, "qty150": 10, "qty500": 6, "rev150": 2990, "rev500": 2994, "target": 15, "has_sell": 1, "cr": 5.9, "mom": -5.9}, {"plant": "L222", "name": "กาญจนาภิเษก-ตลิ่งชัน", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 248, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L222", "name": "กาญจนาภิเษก-ตลิ่งชัน", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 615, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 0.7, "mom": null}, {"plant": "L222", "name": "กาญจนาภิเษก-ตลิ่งชัน", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 525, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.2, "mom": -75.0}, {"plant": "L222", "name": "กาญจนาภิเษก-ตลิ่งชัน", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 627, "total_qty": 2, "total_rev": 998, "qty150": 0, "qty500": 2, "rev150": 0, "rev500": 998, "target": 15, "has_sell": 1, "cr": 0.3, "mom": 100.0}, {"plant": "L222", "name": "กาญจนาภิเษก-ตลิ่งชัน", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 432, "total_qty": 5, "total_rev": 2095, "qty150": 2, "qty500": 3, "rev150": 598, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.2, "mom": 150.0}, {"plant": "L225", "name": "The Crystal", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 139, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.7, "mom": null}, {"plant": "L225", "name": "The Crystal", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 310, "total_qty": 2, "total_rev": 598, "qty150": 2, "qty500": 0, "rev150": 598, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.6, "mom": 100.0}, {"plant": "L225", "name": "The Crystal", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 301, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L225", "name": "The Crystal", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 312, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.3, "mom": null}, {"plant": "L225", "name": "The Crystal", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 242, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.4, "mom": 0.0}, {"plant": "L226", "name": "บางพูน-ปทุมธานี", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L226", "name": "บางพูน-ปทุมธานี", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L226", "name": "บางพูน-ปทุมธานี", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L226", "name": "บางพูน-ปทุมธานี", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L226", "name": "บางพูน-ปทุมธานี", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 182, "total_qty": 14, "total_rev": 6186, "qty150": 4, "qty500": 10, "rev150": 1196, "rev500": 4990, "target": 15, "has_sell": 1, "cr": 7.7, "mom": null}, {"plant": "L228", "name": "ชลบุรี-บ้านบึง 3", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L228", "name": "ชลบุรี-บ้านบึง 3", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L228", "name": "ชลบุรี-บ้านบึง 3", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L228", "name": "ชลบุรี-บ้านบึง 3", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L228", "name": "ชลบุรี-บ้านบึง 3", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-06", "ticket": 290, "total_qty": 12, "total_rev": 5188, "qty150": 4, "qty500": 8, "rev150": 1196, "rev500": 3992, "target": 15, "has_sell": 1, "cr": 4.1, "mom": null}, {"plant": "L230", "name": "แม่สอด-ตาก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L230", "name": "แม่สอด-ตาก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L230", "name": "แม่สอด-ตาก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L230", "name": "แม่สอด-ตาก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L230", "name": "แม่สอด-ตาก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-06", "ticket": 297, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L231", "name": "สิริสมเกียรติ-อุดรฯ", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L231", "name": "สิริสมเกียรติ-อุดรฯ", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L231", "name": "สิริสมเกียรติ-อุดรฯ", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L231", "name": "สิริสมเกียรติ-อุดรฯ", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L231", "name": "สิริสมเกียรติ-อุดรฯ", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-06", "ticket": 307, "total_qty": 11, "total_rev": 5489, "qty150": 0, "qty500": 11, "rev150": 0, "rev500": 5489, "target": 15, "has_sell": 1, "cr": 3.6, "mom": null}, {"plant": "L233", "name": "ถ.สะพานนนฯ-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L233", "name": "ถ.สะพานนนฯ-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L233", "name": "ถ.สะพานนนฯ-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L233", "name": "ถ.สะพานนนฯ-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L233", "name": "ถ.สะพานนนฯ-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 191, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L236", "name": "กรุงเทพฯ-พหลฯ กม.27", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 181, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L236", "name": "กรุงเทพฯ-พหลฯ กม.27", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 375, "total_qty": 4, "total_rev": 1596, "qty150": 2, "qty500": 2, "rev150": 598, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.1, "mom": null}, {"plant": "L236", "name": "กรุงเทพฯ-พหลฯ กม.27", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 380, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L236", "name": "กรุงเทพฯ-พหลฯ กม.27", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 390, "total_qty": 11, "total_rev": 5489, "qty150": 0, "qty500": 11, "rev150": 0, "rev500": 5489, "target": 15, "has_sell": 1, "cr": 2.8, "mom": null}, {"plant": "L236", "name": "กรุงเทพฯ-พหลฯ กม.27", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 266, "total_qty": 2, "total_rev": 998, "qty150": 0, "qty500": 2, "rev150": 0, "rev500": 998, "target": 15, "has_sell": 1, "cr": 0.8, "mom": -81.8}, {"plant": "L238", "name": "เมืองนครราชสีมา", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L238", "name": "เมืองนครราชสีมา", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L238", "name": "เมืองนครราชสีมา", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L238", "name": "เมืองนครราชสีมา", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L238", "name": "เมืองนครราชสีมา", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-06", "ticket": 338, "total_qty": 13, "total_rev": 6287, "qty150": 1, "qty500": 12, "rev150": 299, "rev500": 5988, "target": 15, "has_sell": 1, "cr": 3.8, "mom": null}, {"plant": "L240", "name": "เมืองเชียงใหม่-ท่าศาลา", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-02", "ticket": 171, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.6, "mom": null}, {"plant": "L240", "name": "เมืองเชียงใหม่-ท่าศาลา", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-03", "ticket": 442, "total_qty": 7, "total_rev": 3293, "qty150": 1, "qty500": 6, "rev150": 299, "rev500": 2994, "target": 15, "has_sell": 1, "cr": 1.6, "mom": 600.0}, {"plant": "L240", "name": "เมืองเชียงใหม่-ท่าศาลา", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-04", "ticket": 429, "total_qty": 3, "total_rev": 1297, "qty150": 1, "qty500": 2, "rev150": 299, "rev500": 998, "target": 15, "has_sell": 1, "cr": 0.7, "mom": -57.1}, {"plant": "L240", "name": "เมืองเชียงใหม่-ท่าศาลา", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-05", "ticket": 429, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 0.9, "mom": 33.3}, {"plant": "L240", "name": "เมืองเชียงใหม่-ท่าศาลา", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-06", "ticket": 273, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.4, "mom": -75.0}, {"plant": "L241", "name": "ภูเก็ต", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L241", "name": "ภูเก็ต", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-03", "ticket": 279, "total_qty": 7, "total_rev": 2893, "qty150": 3, "qty500": 4, "rev150": 897, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 2.5, "mom": null}, {"plant": "L241", "name": "ภูเก็ต", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-04", "ticket": 304, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 1.3, "mom": -42.9}, {"plant": "L241", "name": "ภูเก็ต", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-05", "ticket": 306, "total_qty": 27, "total_rev": 13273, "qty150": 1, "qty500": 26, "rev150": 299, "rev500": 12974, "target": 15, "has_sell": 1, "cr": 8.8, "mom": 575.0}, {"plant": "L241", "name": "ภูเก็ต", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-06", "ticket": 222, "total_qty": 4, "total_rev": 1796, "qty150": 1, "qty500": 3, "rev150": 299, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.8, "mom": -85.2}, {"plant": "L242", "name": "บางทราย", "AM": "นายอัยยรัช สอดส่อง", "region": "ภาคตะวันออก", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L242", "name": "บางทราย", "AM": "นายอัยยรัช สอดส่อง", "region": "ภาคตะวันออก", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L242", "name": "บางทราย", "AM": "นายอัยยรัช สอดส่อง", "region": "ภาคตะวันออก", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L242", "name": "บางทราย", "AM": "นายอัยยรัช สอดส่อง", "region": "ภาคตะวันออก", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L242", "name": "บางทราย", "AM": "นายอัยยรัช สอดส่อง", "region": "ภาคตะวันออก", "month": "2026-06", "ticket": 211, "total_qty": 8, "total_rev": 3992, "qty150": 0, "qty500": 8, "rev150": 0, "rev500": 3992, "target": 15, "has_sell": 1, "cr": 3.8, "mom": null}, {"plant": "L243", "name": "โรงแยกก๊าซระยอง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L243", "name": "โรงแยกก๊าซระยอง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L243", "name": "โรงแยกก๊าซระยอง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L243", "name": "โรงแยกก๊าซระยอง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L243", "name": "โรงแยกก๊าซระยอง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-06", "ticket": 317, "total_qty": 8, "total_rev": 3992, "qty150": 0, "qty500": 8, "rev150": 0, "rev500": 3992, "target": 15, "has_sell": 1, "cr": 2.5, "mom": null}, {"plant": "L252", "name": "บุรีรัมย์", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L252", "name": "บุรีรัมย์", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L252", "name": "บุรีรัมย์", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L252", "name": "บุรีรัมย์", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L252", "name": "บุรีรัมย์", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-06", "ticket": 193, "total_qty": 13, "total_rev": 6487, "qty150": 0, "qty500": 13, "rev150": 0, "rev500": 6487, "target": 15, "has_sell": 1, "cr": 6.7, "mom": null}, {"plant": "L254", "name": "บรมราชชนนี(ขาเข้า)", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L254", "name": "บรมราชชนนี(ขาเข้า)", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L254", "name": "บรมราชชนนี(ขาเข้า)", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L254", "name": "บรมราชชนนี(ขาเข้า)", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L254", "name": "บรมราชชนนี(ขาเข้า)", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 238, "total_qty": 3, "total_rev": 1497, "qty150": 0, "qty500": 3, "rev150": 0, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.3, "mom": null}, {"plant": "L255", "name": "คลองหลวง กม.6", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 128, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.8, "mom": null}, {"plant": "L255", "name": "คลองหลวง กม.6", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 286, "total_qty": 3, "total_rev": 897, "qty150": 3, "qty500": 0, "rev150": 897, "rev500": 0, "target": 15, "has_sell": 1, "cr": 1.0, "mom": 200.0}, {"plant": "L255", "name": "คลองหลวง กม.6", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 266, "total_qty": 2, "total_rev": 598, "qty150": 2, "qty500": 0, "rev150": 598, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.8, "mom": -33.3}, {"plant": "L255", "name": "คลองหลวง กม.6", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 258, "total_qty": 6, "total_rev": 2394, "qty150": 3, "qty500": 3, "rev150": 897, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 2.3, "mom": 200.0}, {"plant": "L255", "name": "คลองหลวง กม.6", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 173, "total_qty": 2, "total_rev": 798, "qty150": 1, "qty500": 1, "rev150": 299, "rev500": 499, "target": 15, "has_sell": 1, "cr": 1.2, "mom": -66.7}, {"plant": "L256", "name": "กล้วยน้ำไท", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L256", "name": "กล้วยน้ำไท", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L256", "name": "กล้วยน้ำไท", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L256", "name": "กล้วยน้ำไท", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L256", "name": "กล้วยน้ำไท", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 194, "total_qty": 8, "total_rev": 3992, "qty150": 0, "qty500": 8, "rev150": 0, "rev500": 3992, "target": 15, "has_sell": 1, "cr": 4.1, "mom": null}, {"plant": "L259", "name": "ลาดพร้าว-วังหิน", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L259", "name": "ลาดพร้าว-วังหิน", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L259", "name": "ลาดพร้าว-วังหิน", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L259", "name": "ลาดพร้าว-วังหิน", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L259", "name": "ลาดพร้าว-วังหิน", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 208, "total_qty": 5, "total_rev": 2495, "qty150": 0, "qty500": 5, "rev150": 0, "rev500": 2495, "target": 15, "has_sell": 1, "cr": 2.4, "mom": null}, {"plant": "L262", "name": "ราชบุรี - บ้านโป่ง", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L262", "name": "ราชบุรี - บ้านโป่ง", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L262", "name": "ราชบุรี - บ้านโป่ง", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L262", "name": "ราชบุรี - บ้านโป่ง", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L262", "name": "ราชบุรี - บ้านโป่ง", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-06", "ticket": 157, "total_qty": 3, "total_rev": 1497, "qty150": 0, "qty500": 3, "rev150": 0, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.9, "mom": null}, {"plant": "L264", "name": "ศรีราชา", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L264", "name": "ศรีราชา", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L264", "name": "ศรีราชา", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L264", "name": "ศรีราชา", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L264", "name": "ศรีราชา", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-06", "ticket": 305, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.3, "mom": null}, {"plant": "L267", "name": "ประชาอุทิศ ลาดพร้าว", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L267", "name": "ประชาอุทิศ ลาดพร้าว", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L267", "name": "ประชาอุทิศ ลาดพร้าว", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L267", "name": "ประชาอุทิศ ลาดพร้าว", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L267", "name": "ประชาอุทิศ ลาดพร้าว", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 206, "total_qty": 7, "total_rev": 3493, "qty150": 0, "qty500": 7, "rev150": 0, "rev500": 3493, "target": 15, "has_sell": 1, "cr": 3.4, "mom": null}, {"plant": "L268", "name": "ท่าเรือแหลมฉบัง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-02", "ticket": 101, "total_qty": 9, "total_rev": 3491, "qty150": 5, "qty500": 4, "rev150": 1495, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 8.9, "mom": null}, {"plant": "L268", "name": "ท่าเรือแหลมฉบัง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-03", "ticket": 268, "total_qty": 15, "total_rev": 5685, "qty150": 9, "qty500": 6, "rev150": 2691, "rev500": 2994, "target": 15, "has_sell": 1, "cr": 5.6, "mom": 66.7}, {"plant": "L268", "name": "ท่าเรือแหลมฉบัง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-04", "ticket": 261, "total_qty": 6, "total_rev": 2394, "qty150": 3, "qty500": 3, "rev150": 897, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 2.3, "mom": -60.0}, {"plant": "L268", "name": "ท่าเรือแหลมฉบัง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-05", "ticket": 240, "total_qty": 27, "total_rev": 10273, "qty150": 16, "qty500": 11, "rev150": 4784, "rev500": 5489, "target": 15, "has_sell": 1, "cr": 11.2, "mom": 350.0}, {"plant": "L268", "name": "ท่าเรือแหลมฉบัง", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-06", "ticket": 184, "total_qty": 2, "total_rev": 798, "qty150": 1, "qty500": 1, "rev150": 299, "rev500": 499, "target": 15, "has_sell": 1, "cr": 1.1, "mom": -92.6}, {"plant": "L269", "name": "นิคมอีสเทิร์นซีบอร์ด", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-02", "ticket": 101, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 1.0, "mom": null}, {"plant": "L269", "name": "นิคมอีสเทิร์นซีบอร์ด", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-03", "ticket": 261, "total_qty": 17, "total_rev": 7083, "qty150": 7, "qty500": 10, "rev150": 2093, "rev500": 4990, "target": 15, "has_sell": 1, "cr": 6.5, "mom": 1600.0}, {"plant": "L269", "name": "นิคมอีสเทิร์นซีบอร์ด", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-04", "ticket": 264, "total_qty": 5, "total_rev": 1895, "qty150": 3, "qty500": 2, "rev150": 897, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.9, "mom": -70.6}, {"plant": "L269", "name": "นิคมอีสเทิร์นซีบอร์ด", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-05", "ticket": 246, "total_qty": 37, "total_rev": 16063, "qty150": 12, "qty500": 25, "rev150": 3588, "rev500": 12475, "target": 15, "has_sell": 1, "cr": 15.0, "mom": 640.0}, {"plant": "L269", "name": "นิคมอีสเทิร์นซีบอร์ด", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-06", "ticket": 178, "total_qty": 10, "total_rev": 4790, "qty150": 1, "qty500": 9, "rev150": 299, "rev500": 4491, "target": 15, "has_sell": 1, "cr": 5.6, "mom": -73.0}, {"plant": "L271", "name": "พุทธมณฑลสาย 4", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L271", "name": "พุทธมณฑลสาย 4", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L271", "name": "พุทธมณฑลสาย 4", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L271", "name": "พุทธมณฑลสาย 4", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L271", "name": "พุทธมณฑลสาย 4", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 240, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.4, "mom": null}, {"plant": "L274", "name": "หนองคาย", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L274", "name": "หนองคาย", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L274", "name": "หนองคาย", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L274", "name": "หนองคาย", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L274", "name": "หนองคาย", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-06", "ticket": 270, "total_qty": 12, "total_rev": 5988, "qty150": 0, "qty500": 12, "rev150": 0, "rev500": 5988, "target": 15, "has_sell": 1, "cr": 4.4, "mom": null}, {"plant": "L276", "name": "พิษณุโลก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L276", "name": "พิษณุโลก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-03", "ticket": 318, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 1.3, "mom": null}, {"plant": "L276", "name": "พิษณุโลก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-04", "ticket": 300, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.3, "mom": -75.0}, {"plant": "L276", "name": "พิษณุโลก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-05", "ticket": 299, "total_qty": 19, "total_rev": 8881, "qty150": 3, "qty500": 16, "rev150": 897, "rev500": 7984, "target": 15, "has_sell": 1, "cr": 6.4, "mom": 1800.0}, {"plant": "L276", "name": "พิษณุโลก", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "ภาคเหนือ", "month": "2026-06", "ticket": 207, "total_qty": 3, "total_rev": 1497, "qty150": 0, "qty500": 3, "rev150": 0, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.4, "mom": -84.2}, {"plant": "L277", "name": "ท่ามะขาม", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L277", "name": "ท่ามะขาม", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L277", "name": "ท่ามะขาม", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L277", "name": "ท่ามะขาม", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L277", "name": "ท่ามะขาม", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-06", "ticket": 183, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L279", "name": "เพชรเกษม-อ้อมน้อย", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L279", "name": "เพชรเกษม-อ้อมน้อย", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L279", "name": "เพชรเกษม-อ้อมน้อย", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L279", "name": "เพชรเกษม-อ้อมน้อย", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L279", "name": "เพชรเกษม-อ้อมน้อย", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 195, "total_qty": 2, "total_rev": 998, "qty150": 0, "qty500": 2, "rev150": 0, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.0, "mom": null}, {"plant": "L281", "name": "เมืองขอนแก่น 2", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-02", "ticket": 199, "total_qty": 14, "total_rev": 6586, "qty150": 2, "qty500": 12, "rev150": 598, "rev500": 5988, "target": 15, "has_sell": 1, "cr": 7.0, "mom": null}, {"plant": "L281", "name": "เมืองขอนแก่น 2", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-03", "ticket": 398, "total_qty": 26, "total_rev": 12774, "qty150": 1, "qty500": 25, "rev150": 299, "rev500": 12475, "target": 15, "has_sell": 1, "cr": 6.5, "mom": 85.7}, {"plant": "L281", "name": "เมืองขอนแก่น 2", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-04", "ticket": 369, "total_qty": 9, "total_rev": 4491, "qty150": 0, "qty500": 9, "rev150": 0, "rev500": 4491, "target": 15, "has_sell": 1, "cr": 2.4, "mom": -65.4}, {"plant": "L281", "name": "เมืองขอนแก่น 2", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-05", "ticket": 416, "total_qty": 75, "total_rev": 31625, "qty150": 29, "qty500": 46, "rev150": 8671, "rev500": 22954, "target": 15, "has_sell": 1, "cr": 18.0, "mom": 733.3}, {"plant": "L281", "name": "เมืองขอนแก่น 2", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-06", "ticket": 300, "total_qty": 26, "total_rev": 9774, "qty150": 16, "qty500": 10, "rev150": 4784, "rev500": 4990, "target": 15, "has_sell": 1, "cr": 8.7, "mom": -65.3}, {"plant": "L283", "name": "มีนบุรี", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 155, "total_qty": 7, "total_rev": 2893, "qty150": 3, "qty500": 4, "rev150": 897, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 4.5, "mom": null}, {"plant": "L283", "name": "มีนบุรี", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 358, "total_qty": 15, "total_rev": 6685, "qty150": 4, "qty500": 11, "rev150": 1196, "rev500": 5489, "target": 15, "has_sell": 1, "cr": 4.2, "mom": 114.3}, {"plant": "L283", "name": "มีนบุรี", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 347, "total_qty": 5, "total_rev": 2095, "qty150": 2, "qty500": 3, "rev150": 598, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.4, "mom": -66.7}, {"plant": "L283", "name": "มีนบุรี", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 318, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L283", "name": "มีนบุรี", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 277, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L284", "name": "ราชพฤกษ์-กัลปพฤกษ์", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 139, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L284", "name": "ราชพฤกษ์-กัลปพฤกษ์", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 296, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.3, "mom": null}, {"plant": "L284", "name": "ราชพฤกษ์-กัลปพฤกษ์", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 291, "total_qty": 4, "total_rev": 1796, "qty150": 1, "qty500": 3, "rev150": 299, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.4, "mom": 300.0}, {"plant": "L284", "name": "ราชพฤกษ์-กัลปพฤกษ์", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 330, "total_qty": 3, "total_rev": 1497, "qty150": 0, "qty500": 3, "rev150": 0, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 0.9, "mom": -25.0}, {"plant": "L284", "name": "ราชพฤกษ์-กัลปพฤกษ์", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 239, "total_qty": 5, "total_rev": 2295, "qty150": 1, "qty500": 4, "rev150": 299, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 2.1, "mom": 66.7}, {"plant": "L285", "name": "ชะอำ", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคกลาง", "month": "2026-02", "ticket": 181, "total_qty": 2, "total_rev": 998, "qty150": 0, "qty500": 2, "rev150": 0, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.1, "mom": null}, {"plant": "L285", "name": "ชะอำ", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคกลาง", "month": "2026-03", "ticket": 391, "total_qty": 7, "total_rev": 2693, "qty150": 4, "qty500": 3, "rev150": 1196, "rev500": 1497, "target": 15, "has_sell": 1, "cr": 1.8, "mom": 250.0}, {"plant": "L285", "name": "ชะอำ", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคกลาง", "month": "2026-04", "ticket": 344, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.3, "mom": -85.7}, {"plant": "L285", "name": "ชะอำ", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคกลาง", "month": "2026-05", "ticket": 370, "total_qty": 11, "total_rev": 4889, "qty150": 3, "qty500": 8, "rev150": 897, "rev500": 3992, "target": 15, "has_sell": 1, "cr": 3.0, "mom": 1000.0}, {"plant": "L285", "name": "ชะอำ", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคกลาง", "month": "2026-06", "ticket": 262, "total_qty": 5, "total_rev": 2295, "qty150": 1, "qty500": 4, "rev150": 299, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 1.9, "mom": -54.5}, {"plant": "L286", "name": "พหลโยธิน กม.25", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L286", "name": "พหลโยธิน กม.25", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L286", "name": "พหลโยธิน กม.25", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L286", "name": "พหลโยธิน กม.25", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L286", "name": "พหลโยธิน กม.25", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 209, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L288", "name": "เมืองสุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L288", "name": "เมืองสุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L288", "name": "เมืองสุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L288", "name": "เมืองสุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L288", "name": "เมืองสุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-06", "ticket": 264, "total_qty": 13, "total_rev": 5687, "qty150": 4, "qty500": 9, "rev150": 1196, "rev500": 4491, "target": 15, "has_sell": 1, "cr": 4.9, "mom": null}, {"plant": "L290", "name": "โลตัส สุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L290", "name": "โลตัส สุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L290", "name": "โลตัส สุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L290", "name": "โลตัส สุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L290", "name": "โลตัส สุพรรณบุรี", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "ภาคกลาง", "month": "2026-06", "ticket": 152, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 2.6, "mom": null}, {"plant": "L292", "name": "แยกปทุมธานี 1", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L292", "name": "แยกปทุมธานี 1", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L292", "name": "แยกปทุมธานี 1", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L292", "name": "แยกปทุมธานี 1", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L292", "name": "แยกปทุมธานี 1", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 235, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.4, "mom": null}, {"plant": "L298", "name": "วิภาวดี", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 199, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L298", "name": "วิภาวดี", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 471, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.2, "mom": null}, {"plant": "L298", "name": "วิภาวดี", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 392, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.3, "mom": 0.0}, {"plant": "L298", "name": "วิภาวดี", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 432, "total_qty": 5, "total_rev": 2295, "qty150": 1, "qty500": 4, "rev150": 299, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 1.2, "mom": 400.0}, {"plant": "L298", "name": "วิภาวดี", "AM": "นายนพพล ฤกษ์ประเสริฐกุล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 299, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 1.3, "mom": -20.0}, {"plant": "L300", "name": "รังสิต-คลอง3", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 193, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}, {"plant": "L300", "name": "รังสิต-คลอง3", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 485, "total_qty": 19, "total_rev": 7281, "qty150": 11, "qty500": 8, "rev150": 3289, "rev500": 3992, "target": 15, "has_sell": 1, "cr": 3.9, "mom": null}, {"plant": "L300", "name": "รังสิต-คลอง3", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 467, "total_qty": 6, "total_rev": 2594, "qty150": 2, "qty500": 4, "rev150": 598, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 1.3, "mom": -68.4}, {"plant": "L300", "name": "รังสิต-คลอง3", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 498, "total_qty": 2, "total_rev": 598, "qty150": 2, "qty500": 0, "rev150": 598, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.4, "mom": -66.7}, {"plant": "L300", "name": "รังสิต-คลอง3", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 340, "total_qty": 2, "total_rev": 798, "qty150": 1, "qty500": 1, "rev150": 299, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.6, "mom": 0.0}, {"plant": "L302", "name": "กาญจนาภิเษก-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L302", "name": "กาญจนาภิเษก-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L302", "name": "กาญจนาภิเษก-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L302", "name": "กาญจนาภิเษก-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L302", "name": "กาญจนาภิเษก-บางบัวทอง", "AM": "นายณฤพนธ์ บุญเกื้อกุลวงษ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 253, "total_qty": 6, "total_rev": 2994, "qty150": 0, "qty500": 6, "rev150": 0, "rev500": 2994, "target": 15, "has_sell": 1, "cr": 2.4, "mom": null}, {"plant": "L306", "name": "ลำลูกกาคลอง 4", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 188, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.5, "mom": null}, {"plant": "L306", "name": "ลำลูกกาคลอง 4", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 410, "total_qty": 2, "total_rev": 598, "qty150": 2, "qty500": 0, "rev150": 598, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.5, "mom": 100.0}, {"plant": "L306", "name": "ลำลูกกาคลอง 4", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 350, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L306", "name": "ลำลูกกาคลอง 4", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 407, "total_qty": 8, "total_rev": 2592, "qty150": 7, "qty500": 1, "rev150": 2093, "rev500": 499, "target": 15, "has_sell": 1, "cr": 2.0, "mom": null}, {"plant": "L306", "name": "ลำลูกกาคลอง 4", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 277, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L308", "name": "พัฒนาการ", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L308", "name": "พัฒนาการ", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L308", "name": "พัฒนาการ", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L308", "name": "พัฒนาการ", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L308", "name": "พัฒนาการ", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 200, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 2.0, "mom": null}, {"plant": "L309", "name": "นครปฐม", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L309", "name": "นครปฐม", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L309", "name": "นครปฐม", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L309", "name": "นครปฐม", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L309", "name": "นครปฐม", "AM": "นายปัญญากร รังษีธนะไพศาล", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 201, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 2.0, "mom": null}, {"plant": "L312", "name": "เมืองมหาสารคาม", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L312", "name": "เมืองมหาสารคาม", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L312", "name": "เมืองมหาสารคาม", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L312", "name": "เมืองมหาสารคาม", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L312", "name": "เมืองมหาสารคาม", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-06", "ticket": 220, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.5, "mom": null}, {"plant": "L319", "name": "จรัญสนิทวงศ์ 77", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L319", "name": "จรัญสนิทวงศ์ 77", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L319", "name": "จรัญสนิทวงศ์ 77", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L319", "name": "จรัญสนิทวงศ์ 77", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L319", "name": "จรัญสนิทวงศ์ 77", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 171, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 2.3, "mom": null}, {"plant": "L323", "name": "ราชพฤกษ์ – สวนผัก", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L323", "name": "ราชพฤกษ์ – สวนผัก", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L323", "name": "ราชพฤกษ์ – สวนผัก", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L323", "name": "ราชพฤกษ์ – สวนผัก", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L323", "name": "ราชพฤกษ์ – สวนผัก", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 181, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 2.2, "mom": null}, {"plant": "L325", "name": "กาญจนาภิเษก - บางใหญ่", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L325", "name": "กาญจนาภิเษก - บางใหญ่", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L325", "name": "กาญจนาภิเษก - บางใหญ่", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L325", "name": "กาญจนาภิเษก - บางใหญ่", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L325", "name": "กาญจนาภิเษก - บางใหญ่", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 150, "total_qty": 2, "total_rev": 998, "qty150": 0, "qty500": 2, "rev150": 0, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.3, "mom": null}, {"plant": "L326", "name": "ตลาดหนองบัว-เมืองอุดรธานี", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-02", "ticket": 142, "total_qty": 4, "total_rev": 1196, "qty150": 4, "qty500": 0, "rev150": 1196, "rev500": 0, "target": 15, "has_sell": 1, "cr": 2.8, "mom": null}, {"plant": "L326", "name": "ตลาดหนองบัว-เมืองอุดรธานี", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-03", "ticket": 319, "total_qty": 36, "total_rev": 12564, "qty150": 27, "qty500": 9, "rev150": 8073, "rev500": 4491, "target": 15, "has_sell": 1, "cr": 11.3, "mom": 800.0}, {"plant": "L326", "name": "ตลาดหนองบัว-เมืองอุดรธานี", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-04", "ticket": 301, "total_qty": 15, "total_rev": 5885, "qty150": 8, "qty500": 7, "rev150": 2392, "rev500": 3493, "target": 15, "has_sell": 1, "cr": 5.0, "mom": -58.3}, {"plant": "L326", "name": "ตลาดหนองบัว-เมืองอุดรธานี", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-05", "ticket": 338, "total_qty": 49, "total_rev": 20451, "qty150": 20, "qty500": 29, "rev150": 5980, "rev500": 14471, "target": 15, "has_sell": 1, "cr": 14.5, "mom": 226.7}, {"plant": "L326", "name": "ตลาดหนองบัว-เมืองอุดรธานี", "AM": "นายอาทิตย์ จันทรี", "region": "ภาคตะวันออกเฉียงเหนือ", "month": "2026-06", "ticket": 275, "total_qty": 38, "total_rev": 12962, "qty150": 30, "qty500": 8, "rev150": 8970, "rev500": 3992, "target": 15, "has_sell": 1, "cr": 13.8, "mom": -22.4}, {"plant": "L327", "name": "วิภาวดี 62", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 107, "total_qty": 2, "total_rev": 998, "qty150": 0, "qty500": 2, "rev150": 0, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.9, "mom": null}, {"plant": "L327", "name": "วิภาวดี 62", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 286, "total_qty": 9, "total_rev": 4491, "qty150": 0, "qty500": 9, "rev150": 0, "rev500": 4491, "target": 15, "has_sell": 1, "cr": 3.1, "mom": 350.0}, {"plant": "L327", "name": "วิภาวดี 62", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 284, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.4, "mom": -88.9}, {"plant": "L327", "name": "วิภาวดี 62", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 309, "total_qty": 4, "total_rev": 1996, "qty150": 0, "qty500": 4, "rev150": 0, "rev500": 1996, "target": 15, "has_sell": 1, "cr": 1.3, "mom": 300.0}, {"plant": "L327", "name": "วิภาวดี 62", "AM": "นายอัยยรัช สอดส่อง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 236, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.4, "mom": -75.0}, {"plant": "L330", "name": "สายไหม 56", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L330", "name": "สายไหม 56", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L330", "name": "สายไหม 56", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L330", "name": "สายไหม 56", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L330", "name": "สายไหม 56", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 202, "total_qty": 6, "total_rev": 2994, "qty150": 0, "qty500": 6, "rev150": 0, "rev500": 2994, "target": 15, "has_sell": 1, "cr": 3.0, "mom": null}, {"plant": "L331", "name": "รามอินทรา กม.3", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L331", "name": "รามอินทรา กม.3", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L331", "name": "รามอินทรา กม.3", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L331", "name": "รามอินทรา กม.3", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L331", "name": "รามอินทรา กม.3", "AM": "นายศุภณัฐ ปานเรือง", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 190, "total_qty": 2, "total_rev": 998, "qty150": 0, "qty500": 2, "rev150": 0, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.1, "mom": null}, {"plant": "L334", "name": "แยกเนินสำลี", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-02", "ticket": 126, "total_qty": 1, "total_rev": 299, "qty150": 1, "qty500": 0, "rev150": 299, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.8, "mom": null}, {"plant": "L334", "name": "แยกเนินสำลี", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-03", "ticket": 311, "total_qty": 5, "total_rev": 1495, "qty150": 5, "qty500": 0, "rev150": 1495, "rev500": 0, "target": 15, "has_sell": 1, "cr": 1.6, "mom": 400.0}, {"plant": "L334", "name": "แยกเนินสำลี", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-04", "ticket": 280, "total_qty": 2, "total_rev": 598, "qty150": 2, "qty500": 0, "rev150": 598, "rev500": 0, "target": 15, "has_sell": 1, "cr": 0.7, "mom": -60.0}, {"plant": "L334", "name": "แยกเนินสำลี", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-05", "ticket": 272, "total_qty": 16, "total_rev": 5184, "qty150": 14, "qty500": 2, "rev150": 4186, "rev500": 998, "target": 15, "has_sell": 1, "cr": 5.9, "mom": 700.0}, {"plant": "L334", "name": "แยกเนินสำลี", "AM": "นายวิญญ์ วีรานุกูล", "region": "ภาคตะวันออก", "month": "2026-06", "ticket": 210, "total_qty": 9, "total_rev": 2891, "qty150": 8, "qty500": 1, "rev150": 2392, "rev500": 499, "target": 15, "has_sell": 1, "cr": 4.3, "mom": -43.8}, {"plant": "L336", "name": "กะทู้ 2", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-02", "ticket": 128, "total_qty": 2, "total_rev": 598, "qty150": 2, "qty500": 0, "rev150": 598, "rev500": 0, "target": 15, "has_sell": 1, "cr": 1.6, "mom": null}, {"plant": "L336", "name": "กะทู้ 2", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-03", "ticket": 301, "total_qty": 1, "total_rev": 499, "qty150": 0, "qty500": 1, "rev150": 0, "rev500": 499, "target": 15, "has_sell": 1, "cr": 0.3, "mom": -50.0}, {"plant": "L336", "name": "กะทู้ 2", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-04", "ticket": 259, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L336", "name": "กะทู้ 2", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-05", "ticket": 237, "total_qty": 4, "total_rev": 1596, "qty150": 2, "qty500": 2, "rev150": 598, "rev500": 998, "target": 15, "has_sell": 1, "cr": 1.7, "mom": null}, {"plant": "L336", "name": "กะทู้ 2", "AM": "นายบุญยวัฒน์ พุฒิเมธาพงศ์", "region": "ภาคใต้", "month": "2026-06", "ticket": 166, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": -100.0}, {"plant": "L338", "name": "แยกพงษ์เพชร", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-02", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L338", "name": "แยกพงษ์เพชร", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-03", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L338", "name": "แยกพงษ์เพชร", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-04", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L338", "name": "แยกพงษ์เพชร", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-05", "ticket": 0, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0, "mom": null}, {"plant": "L338", "name": "แยกพงษ์เพชร", "AM": "นายเธียรวิชญ์ สิงหพันธุ์", "region": "กรุงเทพฯ และปริมณฑล", "month": "2026-06", "ticket": 113, "total_qty": 0, "total_rev": 0, "qty150": 0, "qty500": 0, "rev150": 0, "rev500": 0, "target": 15, "has_sell": 0, "cr": 0.0, "mom": null}];
+const MONTHLY=[{"month": "2026-02", "total_qty": 48, "total_rev": 19552, "qty150": 22, "qty500": 26, "mom": null}, {"month": "2026-03", "total_qty": 202, "total_rev": 82598, "qty150": 91, "qty500": 111, "mom": 320.8}, {"month": "2026-04", "total_qty": 71, "total_rev": 29429, "qty150": 30, "qty500": 41, "mom": -64.9}, {"month": "2026-05", "total_qty": 343, "total_rev": 144757, "qty150": 132, "qty500": 211, "mom": 383.1}, {"month": "2026-06", "total_qty": 313, "total_rev": 138587, "qty150": 88, "qty500": 225, "mom": -8.7}];
+const PM={'2026-02':'pilot','2026-03':'pilot','2026-04':'pilot','2026-05':'pilot','2026-06':'current'};
+const ML={'2026-02':'ก.พ. 69','2026-03':'มี.ค. 69','2026-04':'เม.ย. 69','2026-05':'พ.ค. 69','2026-06':'มิ.ย. 69'};
+const MONTHS=['2026-02','2026-03','2026-04','2026-05','2026-06'];
+let currentPhase='all';
+let bC,dC,rC,tC,mC;
 
-let barChart, donutChart, regionChart;
+function fmt(n){return Number(n).toLocaleString('th-TH')}
 
-function fmt(n) { return Number(n).toLocaleString('th-TH'); }
-
-function getFiltered() {
-  const am = document.getElementById('fAM').value;
-  const region = document.getElementById('fRegion').value;
-  const show = document.getElementById('fShow').value;
-  return ALL.filter(d =>
-    (!am || d.AM === am) &&
-    (!region || d.region === region) &&
-    (show === 'all' || (show === 'contrib' && d.has_sell) || (show === 'noncontrib' && !d.has_sell))
-  );
-}
-
-function resetFilters() {
-  document.getElementById('fAM').value = '';
-  document.getElementById('fRegion').value = '';
-  document.getElementById('fShow').value = 'all';
+function setPhase(p){
+  currentPhase=p;
+  document.getElementById('fMonth').value='';
+  document.getElementById('tabAll').className='ptb'+(p==='all'?' aa':'');
+  document.getElementById('tabPilot').className='ptb'+(p==='pilot'?' ap':'');
+  document.getElementById('tabCurrent').className='ptb'+(p==='current'?' ac':'');
   render();
 }
-
-function render() {
-  const data = getFiltered();
-  const contrib = data.filter(d => d.has_sell);
-  const nonContrib = data.filter(d => !d.has_sell);
-  const totalRev = data.reduce((s,d) => s+d.total_rev, 0);
-  const totalQty = data.reduce((s,d) => s+d.total_qty, 0);
-  const qty150 = data.reduce((s,d) => s+d.qty150, 0);
-  const qty500 = data.reduce((s,d) => s+d.qty500, 0);
-  const avgRev = contrib.length ? Math.round(totalRev / contrib.length) : 0;
-
-  // KPI
-  document.getElementById('kRev').textContent = fmt(totalRev);
-  document.getElementById('kQty').innerHTML = fmt(totalQty) + '<span class="kpi-unit">ชิ้น</span>';
-  document.getElementById('kQtySub').textContent = `150ml: ${qty150} | 500ml: ${qty500}`;
-  document.getElementById('kContrib').textContent = contrib.length;
-  document.getElementById('kContribSub').textContent = `จาก ${data.length} สาขา (${data.length ? Math.round(contrib.length/data.length*100) : 0}%)`;
-  document.getElementById('kNonContrib').textContent = nonContrib.length;
-  document.getElementById('kNonContribSub').textContent = `คิดเป็น ${data.length ? Math.round(nonContrib.length/data.length*100) : 0}% ของทั้งหมด`;
-  document.getElementById('kAvg').innerHTML = fmt(avgRev) + '<span class="kpi-unit">฿</span>';
-
-  // product pct
-  const p150p = totalQty ? Math.round(qty150/totalQty*100) : 0;
-  const p500p = totalQty ? 100-p150p : 0;
-  document.getElementById('p150pct').textContent = p150p + '%';
-  document.getElementById('p500pct').textContent = p500p + '%';
-  document.getElementById('p150qty').textContent = qty150 + ' ชิ้น';
-  document.getElementById('p500qty').textContent = qty500 + ' ชิ้น';
-
-  // Bar chart top 15 (by qty)
-  const top15 = [...contrib].sort((a,b) => b.total_qty - a.total_qty).slice(0, 15);
-  document.getElementById('branchCount').textContent = contrib.length + ' สาขา';
-  document.getElementById('topCount').textContent = contrib.length + ' สาขา';
-  if (barChart) barChart.destroy();
-  barChart = new Chart(document.getElementById('barChart'), {
-    type: 'bar',
-    data: {
-      labels: top15.map(d => d.name.length > 18 ? d.name.slice(0,18)+'…' : d.name),
-      datasets: [
-        { label: '150 ml.', data: top15.map(d=>d.qty150), backgroundColor: '#2db88a', borderWidth:0 },
-        { label: '500 ml.', data: top15.map(d=>d.qty500), backgroundColor: '#0a5c47', borderWidth:0 }
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display:false }, tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw} ชิ้น` }}},
-      scales: {
-        x: { stacked:true, grid: { color:'rgba(0,0,0,0.05)' }, ticks: { font:{size:10} } },
-        y: { stacked:true, ticks: { font:{size:10}, color:'#555' } }
-      }
-    }
-  });
-
-  // Donut
-  if (donutChart) donutChart.destroy();
-  donutChart = new Chart(document.getElementById('donutChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['150 ml.','500 ml.'],
-      datasets: [{ data:[qty150, qty500], backgroundColor:['#2db88a','#0a5c47'], borderWidth:0, hoverOffset:4 }]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      cutout: '65%',
-      plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} ชิ้น`}} }
-    }
-  });
-
-  // Region bar
-  const regionMap = {};
-  data.forEach(d => { if(!regionMap[d.region]) regionMap[d.region]=0; regionMap[d.region]+=d.total_rev; });
-  const rEntries = Object.entries(regionMap).sort((a,b)=>b[1]-a[1]);
-  const rLabels = rEntries.map(([k])=>k.replace('กรุงเทพฯ และปริมณฑล','BKK').replace('ภาคตะวันออกเฉียงเหนือ','อีสาน'));
-  const rData = rEntries.map(([,v])=>v);
-  if (regionChart) regionChart.destroy();
-  regionChart = new Chart(document.getElementById('regionChart'), {
-    type: 'bar',
-    data: {
-      labels: rLabels,
-      datasets: [{ label:'ยอดขาย', data:rData, backgroundColor:'#1a8c6a', borderWidth:0, borderRadius:3 }]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ฿${fmt(ctx.raw)}`}} },
-      scales: {
-        x: { ticks:{font:{size:9}, maxRotation:30} },
-        y: { ticks:{font:{size:9}, callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}, grid:{color:'rgba(0,0,0,0.05)'} }
-      }
-    }
-  });
-
-  // Top table
-  const topSorted = [...contrib].sort((a,b)=>b.total_rev-a.total_rev);
-  document.getElementById('topTable').innerHTML = topSorted.map((d,i) => {
-    const pct = Math.round(d.total_qty / d.target * 100);
-    const over = pct >= 100;
-    const barW = Math.min(pct, 100);
-    const pill = over
-      ? `<span class="pill pill-green">✓ ${pct}%</span>`
-      : `<span class="pill pill-amber">${pct}%</span>`;
-    return `<tr>
-      <td><span class="rank">${i+1}</span></td>
-      <td class="branch-name">${d.name}</td>
-      <td class="r">
-        <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
-          ${pill}
-        </div>
-      </td>
-      <td class="r">${d.total_qty}</td>
-      <td class="r">฿${fmt(d.total_rev)}</td>
-    </tr>`;
-  }).join('');
-
-  // Non-contrib table
-  document.getElementById('ncCount').textContent = nonContrib.length + ' สาขา';
-  if (nonContrib.length === 0) {
-    document.getElementById('ncTable').innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--gray-500);padding:20px">ไม่มีสาขาที่ไม่มียอดขาย</td></tr>`;
-  } else {
-    document.getElementById('ncTable').innerHTML = nonContrib
-      .sort((a,b)=>b.ticket-a.ticket)
-      .map(d => `<tr>
-        <td class="branch-name">${d.name}</td>
-        <td style="font-size:11px;color:var(--gray-500)">${d.AM.replace('นาย','').replace('นาง','')}</td>
-        <td class="r">${d.ticket}</td>
-        <td class="r"><span class="pill pill-red">ไม่มียอด</span></td>
-      </tr>`).join('');
-  }
+function resetFilters(){
+  currentPhase='all';
+  ['fMonth','fAM','fRegion'].forEach(id=>document.getElementById(id).value='');
+  setPhase('all');
+}
+function getFilt(){
+  const am=document.getElementById('fAM').value;
+  const rg=document.getElementById('fRegion').value;
+  const mn=document.getElementById('fMonth').value;
+  return ALL.filter(d=>(!am||d.AM===am)&&(!rg||d.region===rg)&&(!mn||d.month===mn)&&(currentPhase==='all'||PM[d.month]===currentPhase));
 }
 
+function render(){
+  const data=getFilt();
+
+  // Aggregate by branch using correct field names
+  const byB={};
+  data.forEach(d=>{
+    if(!byB[d.plant])byB[d.plant]={name:d.name,AM:d.AM,region:d.region,qty:0,rev:0,q150:0,q500:0,ticket:0,mom_s:0,mom_c:0};
+    const b=byB[d.plant];
+    b.qty+=d.total_qty;
+    b.rev+=d.total_rev;
+    b.q150+=d.qty150;
+    b.q500+=d.qty500;
+    b.ticket+=d.ticket;
+    if(d.mom!==null&&d.mom!==undefined){b.mom_s+=d.mom;b.mom_c++;}
+  });
+  const brs=Object.entries(byB).map(([plant,b])=>({
+    plant,name:b.name,AM:b.AM,region:b.region,
+    qty:b.qty,rev:b.rev,q150:b.q150,q500:b.q500,ticket:b.ticket,
+    cr:b.ticket>0?Math.round(b.qty/b.ticket*1000)/10:0,
+    avg_mom:b.mom_c>0?Math.round(b.mom_s/b.mom_c*10)/10:null
+  }));
+  const contrib=brs.filter(b=>b.qty>0);
+  const nc=brs.filter(b=>b.qty===0);
+  const totalRev=brs.reduce((s,b)=>s+b.rev,0);
+  const totalQty=brs.reduce((s,b)=>s+b.qty,0);
+  const totalTicket=brs.reduce((s,b)=>s+b.ticket,0);
+  const qty150=brs.reduce((s,b)=>s+b.q150,0);
+  const qty500=brs.reduce((s,b)=>s+b.q500,0);
+  const avgCR=totalTicket>0?(totalQty/totalTicket*100).toFixed(1):0;
+
+  // MoM KPI
+  const actM=MONTHS.filter(m=>currentPhase==='all'||PM[m]===currentPhase);
+  const fMonth=document.getElementById('fMonth').value;
+  const lastM=fMonth||actM[actM.length-1];
+  const lastMD=MONTHLY.find(m=>m.month===lastM);
+  const lastMoM=lastMD?.mom;
+
+  // KPIs
+  document.getElementById('kRev').textContent=fmt(totalRev);
+  document.getElementById('kQty').innerHTML=fmt(totalQty)+'<span class="ku">ชิ้น</span>';
+  document.getElementById('kQtySub').textContent='150ml: '+qty150+' | 500ml: '+qty500;
+  document.getElementById('kContrib').textContent=contrib.length;
+  document.getElementById('kContribSub').textContent='จาก '+brs.length+' สาขา ('+Math.round(contrib.length/Math.max(brs.length,1)*100)+'%)';
+  document.getElementById('kNC').textContent=nc.length;
+  document.getElementById('kNCSub').textContent=Math.round(nc.length/Math.max(brs.length,1)*100)+'% ของทั้งหมด';
+  document.getElementById('kCR').innerHTML=avgCR+'<span class="ku">%</span>';
+  const mEl=document.getElementById('kMoM');
+  if(lastMoM!=null){mEl.innerHTML=(lastMoM>0?'<span class="mu">↑':'<span class="md">↓')+Math.abs(lastMoM).toFixed(1)+'%</span>';} else {mEl.textContent='—';}
+  document.getElementById('kMoMSub').textContent='vs '+ML[actM[actM.length-2]]||'เดือนก่อน';
+
+  // Donut
+  const p150p=totalQty?Math.round(qty150/totalQty*100):0;
+  document.getElementById('p150pct').textContent=p150p+'%';
+  document.getElementById('p500pct').textContent=(100-p150p)+'%';
+  document.getElementById('p150qty').textContent=qty150+' ชิ้น';
+  document.getElementById('p500qty').textContent=qty500+' ชิ้น';
+  if(dC)dC.destroy();
+  dC=new Chart(document.getElementById('donutChart'),{
+    type:'doughnut',
+    data:{labels:['150 ml.','500 ml.'],datasets:[{data:[qty150,qty500],backgroundColor:['#5DCAA5','#0F6E56'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw} ชิ้น`}}}}
+  });
+
+  // Bar top15 — ใช้ q150/q500 ที่ aggregate แล้ว
+  const top15=contrib.sort((a,b)=>b.qty-a.qty).slice(0,15);
+  document.getElementById('branchCount').textContent=contrib.length+' สาขา';
+  document.getElementById('crCount').textContent=contrib.length+' สาขา';
+  if(bC)bC.destroy();
+  bC=new Chart(document.getElementById('barChart'),{
+    type:'bar',
+    data:{
+      labels:top15.map(b=>b.name.length>16?b.name.slice(0,16)+'…':b.name),
+      datasets:[
+        {label:'150 ml.',data:top15.map(b=>b.q150),backgroundColor:'#5DCAA5',borderWidth:0},
+        {label:'500 ml.',data:top15.map(b=>b.q500),backgroundColor:'#0F6E56',borderWidth:0}
+      ]
+    },
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} ชิ้น`}}},
+      scales:{
+        x:{stacked:true,min:0,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10},precision:0}},
+        y:{stacked:true,ticks:{font:{size:9},color:'#555'}}
+      }
+    }
+  });
+
+  // Region
+  const rgMap={};
+  data.forEach(d=>{if(!rgMap[d.region])rgMap[d.region]=0;rgMap[d.region]+=d.total_rev;});
+  const rE=Object.entries(rgMap).sort((a,b)=>b[1]-a[1]);
+  if(rC)rC.destroy();
+  rC=new Chart(document.getElementById('regionChart'),{
+    type:'bar',
+    data:{labels:rE.map(([k])=>k.replace('กรุงเทพฯ และปริมณฑล','BKK').replace('ภาคตะวันออกเฉียงเหนือ','อีสาน')),
+    datasets:[{data:rE.map(([,v])=>v),backgroundColor:'#1a8c6a',borderWidth:0,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{font:{size:8}}},y:{ticks:{font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}}}}
+  });
+
+  // Trend chart (mixed bar+line)
+  const filtM=MONTHS.filter(m=>(currentPhase==='all'||PM[m]===currentPhase)&&(!fMonth||m===fMonth));
+  const mData=filtM.map(m=>{
+    const rows=data.filter(d=>d.month===m);
+    return{m,
+      q150:rows.reduce((s,d)=>s+d.qty150,0),
+      q500:rows.reduce((s,d)=>s+d.qty500,0),
+      total:rows.reduce((s,d)=>s+d.total_qty,0)
+    };
+  });
+  const bg150=filtM.map(m=>PM[m]==='pilot'?'#afa9ec':'#5DCAA5');
+  const bg500=filtM.map(m=>PM[m]==='pilot'?'#7F77DD':'#0F6E56');
+  if(tC)tC.destroy();
+  tC=new Chart(document.getElementById('trendChart'),{
+    type:'bar',
+    data:{
+      labels:filtM.map(m=>ML[m]),
+      datasets:[
+        {type:'bar',label:'150 ml.',data:mData.map(x=>x.q150),backgroundColor:bg150,stack:'s',borderWidth:0,order:2},
+        {type:'bar',label:'500 ml.',data:mData.map(x=>x.q500),backgroundColor:bg500,stack:'s',borderWidth:0,order:2},
+        {type:'line',label:'ยอดรวม',data:mData.map(x=>x.total),borderColor:'#BA7517',borderWidth:2.5,pointBackgroundColor:'#BA7517',pointRadius:5,tension:0.3,fill:false,order:1,yAxisID:'y'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} ชิ้น`}}},
+      scales:{
+        x:{stacked:true,ticks:{font:{size:11},autoSkip:false},grid:{display:false}},
+        y:{stacked:true,ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}}
+      }
+    }
+  });
+
+  // MoM chart
+  const momVals=filtM.map(m=>{const md=MONTHLY.find(x=>x.month===m);return md?.mom??null;});
+  if(mC)mC.destroy();
+  mC=new Chart(document.getElementById('momChart'),{
+    type:'bar',
+    data:{labels:filtM.map(m=>ML[m]),datasets:[{
+      label:'MoM %',data:momVals,
+      backgroundColor:momVals.map(v=>v===null?'#e8e8e8':v>=0?'rgba(26,140,106,.8)':'rgba(217,64,64,.8)'),
+      borderRadius:4,borderWidth:0
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw===null?' ไม่มีข้อมูล':` ${ctx.raw>0?'↑':'↓'}${Math.abs(ctx.raw).toFixed(1)}%`}}},
+      scales:{
+        x:{ticks:{font:{size:11},autoSkip:false},grid:{display:false}},
+        y:{ticks:{font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'},
+           afterDataLimits:ax=>{const mx=Math.max(...momVals.filter(v=>v!==null).map(Math.abs),10);ax.min=-mx*1.2;ax.max=mx*1.2;}}
+      }
+    }
+  });
+
+  // CR table
+  const crS=contrib.sort((a,b)=>b.qty-a.qty);
+  document.getElementById('crTable').innerHTML=crS.map((b,i)=>{
+    const bw=Math.min(b.cr*5,100);
+    const mc=b.avg_mom!=null?(b.avg_mom>0?`<span class="mu">↑${Math.abs(b.avg_mom).toFixed(1)}%</span>`:`<span class="md">↓${Math.abs(b.avg_mom).toFixed(1)}%</span>`):'<span class="mn">—</span>';
+    return `<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${b.AM.replace('นาย','').replace('นาง','')}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;min-width:32px;text-align:right;color:${b.cr>=5?'var(--td)':b.cr>=2?'var(--g9)':'var(--rd)'}">${b.cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">฿${fmt(b.rev)}</td></tr>`;
+  }).join('');
+
+  // NC table
+  document.getElementById('ncCount').textContent=nc.length+' สาขา';
+  document.getElementById('ncTable').innerHTML=nc.length===0
+    ?'<tr><td colspan="4" style="text-align:center;color:var(--g5);padding:16px">ไม่มีสาขาที่ไม่มียอดขาย</td></tr>'
+    :nc.sort((a,b)=>b.ticket-a.ticket).map(b=>`<tr><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${b.AM.replace('นาย','').replace('นาง','')}</td><td class="r">${fmt(b.ticket)}</td><td class="r"><span class="pill pr">ไม่มียอด</span></td></tr>`).join('');
+
+
+}
 render();
 </script>
 </body>
