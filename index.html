@@ -386,10 +386,10 @@ function render(){
   let lastMoM=null,prevLabel='เดือนก่อน';
   if(fMonth){
     const mi=actM.indexOf(fMonth);
-    if(mi>0){prevLabel=ML[actM[mi-1]];if(qtyByMonth[actM[mi-1]]>0)lastMoM=Math.round((qtyByMonth[fMonth]-qtyByMonth[actM[mi-1]])/qtyByMonth[actM[mi-1]]*10)/10;}
+    if(mi>0){prevLabel=ML[actM[mi-1]];if(qtyByMonth[actM[mi-1]]>0)lastMoM=Math.round((qtyByMonth[fMonth]-qtyByMonth[actM[mi-1]])/qtyByMonth[actM[mi-1]]*1000)/10;}
   } else if(actM.length>=2){
     prevLabel=ML[actM[actM.length-2]];
-    if(qtyByMonth[actM[actM.length-2]]>0)lastMoM=Math.round((qtyByMonth[actM[actM.length-1]]-qtyByMonth[actM[actM.length-2]])/qtyByMonth[actM[actM.length-2]]*10)/10;
+    if(qtyByMonth[actM[actM.length-2]]>0)lastMoM=Math.round((qtyByMonth[actM[actM.length-1]]-qtyByMonth[actM[actM.length-2]])/qtyByMonth[actM[actM.length-2]]*1000)/10;
   }
 
   // KPIs
