@@ -3,211 +3,294 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BMF Cleaning — รายงานยอดขาย ก.พ.–มิ.ย. 2569</title>
+<title>BMF Cleaning — Executive Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --td:#0a5c47;--tm:#1a8c6a;--tl:#2db88a;--tp:#e8f7f2;
-  --am:#e8a020;--ap:#fef7e8;--rd:#d94040;--rp:#fdf0f0;
-  --pu:#6b4fbb;--pp:#f0ecfb;--pl:#afa9ec;
-  --g9:#1a1a1a;--g7:#4a4a4a;--g5:#888;--g2:#e8e8e8;--g1:#f5f5f5;
+  --am:#d4871a;--ap:#fef3e2;--rd:#c53030;--rp:#fff0f0;
+  --pu:#5a3fb5;--pp:#f0ecfb;
+  --g9:#111827;--g7:#374151;--g5:#6b7280;--g3:#d1d5db;--g1:#f9fafb;--g0:#fff;
 }
-body{font-family:'Sarabun',sans-serif;background:var(--g1);color:var(--g9);font-size:14px;line-height:1.5}
-.hdr{background:var(--td);color:white;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.logo{display:flex;align-items:center;gap:10px}
-.lb{background:var(--tl);color:white;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px}
-.ht{font-size:15px;font-weight:600}
+body{font-family:'Sarabun',sans-serif;background:var(--g1);color:var(--g9);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* Header */
+.hdr{background:linear-gradient(135deg,#0a5c47,#1a8c6a);color:white;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.hdr-inner{max-width:1340px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px}
+.lb{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:white;font-size:13px;font-weight:700;padding:4px 10px;border-radius:6px;letter-spacing:.5px}
+.ht{font-size:16px;font-weight:700;letter-spacing:.1px}
 .hs{font-size:11px;opacity:.7;margin-top:1px}
-.hr{font-size:11px;opacity:.7;text-align:right}
-.main{max-width:1300px;margin:0 auto;padding:18px 18px 40px}
-.fb{background:white;border:1px solid var(--g2);border-radius:10px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.hr-info{text-align:right;font-size:11px;opacity:.7}
+
+/* Summary bar */
+.summary-bar{background:white;border-bottom:1px solid var(--g3);padding:10px 0}
+.summary-inner{max-width:1340px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--g7);flex-wrap:wrap}
+.summary-inner strong{color:var(--g9)}
+.sum-sep{color:var(--g3);margin:0 4px}
+
+/* Main */
+.main{max-width:1340px;margin:0 auto;padding:20px 24px 48px}
+
+/* Filter */
+.fb{background:white;border:1px solid var(--g3);border-radius:12px;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .fb label{font-size:12px;color:var(--g5);font-weight:500}
-.fb select{font-family:'Sarabun',sans-serif;font-size:12px;padding:5px 8px;border:1px solid var(--g2);border-radius:6px;background:var(--g1);color:var(--g9);cursor:pointer;outline:none}
-.pt{display:flex;gap:6px}
-.ptb{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--g2);background:white;color:var(--g7);font-family:'Sarabun',sans-serif}
-.aa{background:var(--ap);border-color:var(--am);color:#9a6010}
+.fb select{font-family:'Sarabun',sans-serif;font-size:12px;padding:5px 10px;border:1px solid var(--g3);border-radius:8px;background:var(--g1);color:var(--g9);cursor:pointer;outline:none}
+.pt{display:flex;gap:5px}
+.ptb{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--g3);background:white;color:var(--g7);font-family:'Sarabun',sans-serif;transition:all .15s}
+.aa{background:var(--ap);border-color:var(--am);color:var(--am)}
 .ap{background:var(--pp);border-color:var(--pu);color:var(--pu)}
 .ac{background:var(--tp);border-color:var(--tm);color:var(--td)}
-.sep{width:1px;height:22px;background:var(--g2)}
+.sep{width:1px;height:22px;background:var(--g3)}
 .rst{margin-left:auto;font-size:12px;color:var(--tm);cursor:pointer;background:none;border:none;font-family:'Sarabun',sans-serif;text-decoration:underline}
-.kg{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
-.kc{background:white;border:1px solid var(--g2);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden}
-.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tl)}
-.kc.w::before{background:var(--am)}
-.kc.a::before{background:var(--rd)}
-.kc.p::before{background:var(--pu)}
-.kc.b::before{background:#378ADD}
-.kl{font-size:10px;color:var(--g5);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
-.kv{font-size:22px;font-weight:600;color:var(--g9);line-height:1.1}
-.ku{font-size:11px;font-weight:400;color:var(--g5);margin-left:2px}
-.ks{font-size:11px;color:var(--g5);margin-top:3px}
-.ct{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.cm{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
-.cr2{display:flex;flex-direction:column;gap:14px}
-.card{background:white;border:1px solid var(--g2);border-radius:10px;padding:14px}
-.ctit{font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
-.bdg{font-size:10px;padding:2px 7px;border-radius:12px;font-weight:600;text-transform:none}
-.bg{background:var(--tp);color:var(--td)}
-.br{background:var(--rp);color:var(--rd)}
-.ba{background:var(--ap);color:#9a6010}
+
+/* KPI row — 4 cards only */
+.krow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kc{background:white;border:1px solid var(--g3);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.kc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.kc.green::after{background:var(--tl)}
+.kc.amber::after{background:var(--am)}
+.kc.red::after{background:var(--rd)}
+.kc.blue::after{background:#3b82f6}
+.kl{font-size:11px;color:var(--g5);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.kv{font-size:28px;font-weight:700;color:var(--g9);line-height:1.1;display:flex;align-items:baseline;gap:4px}
+.ku{font-size:13px;font-weight:400;color:var(--g5)}
+.ks{font-size:12px;color:var(--g5);margin-top:5px}
+.kbadge{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:8px;margin-top:6px}
+.kb-g{background:var(--tp);color:var(--td)}
+.kb-r{background:var(--rp);color:var(--rd)}
+.kb-a{background:var(--ap);color:var(--am)}
+
+/* Section title */
+.stit{font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--g3)}
+
+/* Top row: trend + traffic light */
+.top-row{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:white;border:1px solid var(--g3);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+
+/* Traffic light grid */
+.tl-grid{display:flex;flex-direction:column;gap:8px}
+.tl-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:8px 10px;border-radius:8px;background:var(--g1)}
+.tl-row.green{background:#f0fdf4}
+.tl-row.amber{background:#fffbeb}
+.tl-row.red{background:#fff5f5}
+.tl-name{font-size:12px;font-weight:500;color:var(--g9)}
+.tl-pct{font-size:13px;font-weight:700}
+.tl-pct.green{color:var(--td)}
+.tl-pct.amber{color:var(--am)}
+.tl-pct.red{color:var(--rd)}
+.tl-bar-wrap{width:70px;height:6px;background:var(--g3);border-radius:3px;overflow:hidden}
+.tl-bar{height:6px;border-radius:3px}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tl-dot.green{background:#22c55e}
+.tl-dot.amber{background:#f59e0b}
+.tl-dot.red{background:#ef4444}
+.tl-sub{font-size:10px;color:var(--g5)}
+
+/* Mid row: bar + AM table */
+.mid-row{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px}
+
+/* AM table */
+.am-table{width:100%;border-collapse:collapse;font-size:12px}
+.am-table thead th{font-size:10px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.3px;padding:5px 8px;border-bottom:1.5px solid var(--g3);text-align:left;background:white;position:sticky;top:0}
+.am-table thead th.r{text-align:right}
+.am-table tbody td{padding:7px 8px;border-bottom:1px solid var(--g3);vertical-align:middle}
+.am-table tbody td.r{text-align:right;color:var(--g7)}
+.am-table tbody tr:last-child td{border-bottom:none}
+.am-table tbody tr:hover{background:var(--g1)}
+.prog{width:50px;height:5px;background:var(--g3);border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px;overflow:hidden}
+.prog-fill{height:5px;border-radius:3px}
+
+/* Legend */
 .leg{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
 .li{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--g7)}
 .ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-.brow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.frow{margin-bottom:14px}
-.tsc{max-height:300px;overflow-y:auto}
+
+/* Bottom: MoM + NC */
+.bot-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* Collapsible detail */
+.detail-toggle{width:100%;background:white;border:1px solid var(--g3);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:500;color:var(--g7);box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:8px}
+.detail-toggle:hover{background:var(--g1)}
+.detail-body{display:none;background:white;border:1px solid var(--g3);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:14px}
+.detail-body.open{display:block}
+.tsc{max-height:320px;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{font-size:10px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.3px;padding:5px 7px;border-bottom:1.5px solid var(--g2);background:white;position:sticky;top:0;text-align:left}
+thead th{font-size:10px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.3px;padding:5px 8px;border-bottom:1.5px solid var(--g3);background:white;position:sticky;top:0;text-align:left}
 thead th.r{text-align:right}
-tbody td{padding:6px 7px;border-bottom:1px solid var(--g2);color:var(--g9);vertical-align:middle}
+tbody td{padding:6px 8px;border-bottom:1px solid var(--g3);color:var(--g9);vertical-align:middle}
 tbody td.r{text-align:right;color:var(--g7)}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover{background:var(--g1)}
-.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 6px;border-radius:8px}
 .pg{background:var(--tp);color:var(--td)}
 .pr{background:var(--rp);color:var(--rd)}
-.pa{background:var(--ap);color:#9a6010}
+.pa{background:var(--ap);color:var(--am)}
 .rnk{width:18px;height:18px;border-radius:50%;background:var(--tp);color:var(--td);font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
-.mu{color:#0a5c47;font-weight:600}
+.mu{color:var(--td);font-weight:600}
 .md{color:var(--rd);font-weight:600}
-.mn{color:var(--g5)}
 .cbw{display:inline-flex;align-items:center;gap:4px}
-.cbb{width:40px;height:5px;background:var(--g2);border-radius:3px;display:inline-block}
+.cbb{width:40px;height:5px;background:var(--g3);border-radius:3px;display:inline-block}
 .cbf{height:5px;border-radius:3px;background:var(--tl)}
-.rw{display:flex;align-items:center;gap:14px}
-.rs{flex:1;display:flex;flex-direction:column;gap:7px}
-.rr{display:flex;justify-content:space-between;align-items:center;font-size:12px}
-.ft{text-align:center;font-size:11px;color:var(--g5);margin-top:28px;padding-top:14px;border-top:1px solid var(--g2)}
-@media(max-width:1000px){.kg{grid-template-columns:repeat(3,1fr)}.ct,.cm,.brow{grid-template-columns:1fr}}
+
+.footer{text-align:center;font-size:11px;color:var(--g5);margin-top:32px;padding-top:16px;border-top:1px solid var(--g3)}
+@media(max-width:1000px){.krow,.top-row,.mid-row,.bot-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <header class="hdr">
-  <div class="logo"><span class="lb">BMF</span><div><div class="ht">รายงานยอดขายบริการล้างห้องเครื่อง</div><div class="hs">กุมภาพันธ์ – มิถุนายน 2569 · Pilot & Current Phase</div></div></div>
-  <div class="hr">ข้อมูล 5 เดือน · 55 สาขา</div>
-</header>
-<main class="main">
-
-<div class="fb">
-  <label>Phase</label>
-  <div class="pt">
-    <button class="ptb aa" id="tabAll" onclick="setPhase('all')">ทั้งหมด</button>
-    <button class="ptb" id="tabPilot" onclick="setPhase('pilot')">Pilot (ก.พ.–พ.ค.)</button>
-    <button class="ptb" id="tabCurrent" onclick="setPhase('current')">Current (มิ.ย.)</button>
-  </div>
-  <div class="sep"></div>
-  <label>เดือน</label>
-  <select id="fMonth" onchange="render()">
-    <option value="">ทุกเดือน</option>
-    <option value="2026-02">ก.พ. 69</option><option value="2026-03">มี.ค. 69</option>
-    <option value="2026-04">เม.ย. 69</option><option value="2026-05">พ.ค. 69</option>
-    <option value="2026-06">มิ.ย. 69</option>
-  </select>
-  <div class="sep"></div>
-  <label>AM</label>
-  <select id="fAM" onchange="render()">
-    <option value="">ทั้งหมด</option>
-    <option>นายณฤพนธ์ บุญเกื้อกุลวงษ์</option><option>นายนพพล ฤกษ์ประเสริฐกุล</option>
-    <option>นายบุญยวัฒน์ พุฒิเมธาพงศ์</option><option>นายปัญญากร รังษีธนะไพศาล</option>
-    <option>นายวิญญ์ วีรานุกูล</option><option>นายศุภณัฐ ปานเรือง</option>
-    <option>นายอัยยรัช สอดส่อง</option><option>นายอาทิตย์ จันทรี</option>
-    <option>นายเธียรวิชญ์ สิงหพันธุ์</option>
-  </select>
-  <label>ภาค</label>
-  <select id="fRegion" onchange="render()">
-    <option value="">ทั้งหมด</option>
-    <option>กรุงเทพฯ และปริมณฑล</option><option>ภาคกลาง</option>
-    <option>ภาคตะวันออก</option><option>ภาคตะวันออกเฉียงเหนือ</option>
-    <option>ภาคเหนือ</option><option>ภาคใต้</option>
-  </select>
-  <button class="rst" onclick="resetFilters()">ล้างตัวกรอง</button>
-</div>
-
-<div class="kg">
-  <div class="kc"><div class="kl">ยอดขาย (บาท)</div><div class="kv" id="kRev">—</div><div class="ks">รวมทุกสาขา</div></div>
-  <div class="kc"><div class="kl">จำนวนชิ้น</div><div class="kv" id="kQty">—</div><div class="ks" id="kQtySub">—</div></div>
-  <div class="kc w"><div class="kl">สาขาที่ขายได้</div><div class="kv" id="kContrib">—</div><div class="ks" id="kContribSub">—</div></div>
-  <div class="kc a"><div class="kl">ไม่มียอดขาย</div><div class="kv" id="kNC">—</div><div class="ks" id="kNCSub">—</div></div>
-  <div class="kc b"><div class="kl">Avg Conversion Rate</div><div class="kv" id="kCR">—<span class="ku">%</span></div><div class="ks">ยอดขาย ÷ Ticket</div></div>
-  <div class="kc p"><div class="kl">MoM เดือนล่าสุด</div><div class="kv" id="kMoM">—</div><div class="ks" id="kMoMSub">—</div></div>
-</div>
-
-<div class="ct">
-  <div class="card">
-    <div class="ctit">แนวโน้มยอดขายรายเดือน (ชิ้น)</div>
-    <div class="leg">
-      <span class="li"><span class="ld" style="background:#afa9ec"></span>Pilot 150ml</span>
-      <span class="li"><span class="ld" style="background:#7F77DD"></span>Pilot 500ml</span>
-      <span class="li"><span class="ld" style="background:#5DCAA5"></span>Current 150ml</span>
-      <span class="li"><span class="ld" style="background:#0F6E56"></span>Current 500ml</span>
-      <span class="li"><span style="display:inline-block;width:18px;height:2px;background:#BA7517;vertical-align:middle;margin-right:2px"></span>ยอดรวม</span>
-    </div>
-    <div style="position:relative;height:210px"><canvas id="trendChart" role="img" aria-label="กราฟแนวโน้มยอดขาย">ก.พ.: 48, มี.ค.: 202, เม.ย.: 71, พ.ค.: 343, มิ.ย.: 313 ชิ้น</canvas></div>
-  </div>
-  <div class="card">
-    <div class="ctit">MoM % เปลี่ยนแปลง vs เดือนก่อน</div>
-    <div style="position:relative;height:230px"><canvas id="momChart" role="img" aria-label="MoM %">มี.ค.+321%, เม.ย.-65%, พ.ค.+383%, มิ.ย.-9%</canvas></div>
-  </div>
-</div>
-
-<div class="cm">
-  <div class="card">
-    <div class="ctit">Top 15 สาขา ยอดขายสูงสุด <span class="bdg bg" id="branchCount">—</span></div>
-    <div class="leg">
-      <span class="li"><span class="ld" style="background:#5DCAA5"></span>150 ml.</span>
-      <span class="li"><span class="ld" style="background:#0F6E56"></span>500 ml.</span>
-    </div>
-    <div style="position:relative;height:340px"><canvas id="barChart" role="img" aria-label="ยอดขายรายสาขา"></canvas></div>
-  </div>
-  <div class="cr2">
-    <div class="card">
-      <div class="ctit">สัดส่วนสินค้า</div>
-      <div class="rw">
-        <div style="position:relative;width:100px;height:100px;flex-shrink:0"><canvas id="donutChart" role="img" aria-label="สัดส่วน 150/500ml"></canvas></div>
-        <div class="rs">
-          <div class="rr"><span style="color:var(--g7)">150 ml.</span><span style="font-weight:600" id="p150pct">—</span></div>
-          <div class="rr"><span style="color:var(--g7)">500 ml.</span><span style="font-weight:600" id="p500pct">—</span></div>
-          <div style="border-top:1px solid var(--g2);margin-top:4px;padding-top:6px">
-            <div class="rr"><span style="font-size:11px;color:var(--g5)">150 ml.</span><span style="font-size:12px;font-weight:600" id="p150qty">—</span></div>
-            <div class="rr"><span style="font-size:11px;color:var(--g5)">500 ml.</span><span style="font-size:12px;font-weight:600" id="p500qty">—</span></div>
-          </div>
-        </div>
+  <div class="hdr-inner">
+    <div class="logo">
+      <span class="lb">BMF</span>
+      <div>
+        <div class="ht">รายงานยอดขายบริการล้างห้องเครื่อง</div>
+        <div class="hs">กุมภาพันธ์ – มิถุนายน 2569 · Executive Dashboard</div>
       </div>
     </div>
-    <div class="card">
-      <div class="ctit">ยอดขายตามภาค (บาท)</div>
-      <div style="position:relative;height:150px"><canvas id="regionChart" role="img" aria-label="ยอดขายตามภาค"></canvas></div>
-    </div>
+    <div class="hr-info">อัปเดตล่าสุด: 21 มิ.ย. 2569<br>55 สาขาทั่วประเทศ</div>
   </div>
+</header>
+
+<div class="summary-bar">
+  <div class="summary-inner" id="summaryText">กำลังโหลด...</div>
 </div>
 
-<div class="frow">
-  <div class="card">
-    <div class="ctit">Conversion Rate & MoM รายสาขา <span class="bdg bg" id="crCount">—</span></div>
+<main class="main">
+
+  <div class="fb">
+    <label>Phase</label>
+    <div class="pt">
+      <button class="ptb aa" id="tabAll" onclick="setPhase('all')">ทั้งหมด</button>
+      <button class="ptb" id="tabPilot" onclick="setPhase('pilot')">Pilot (ก.พ.–พ.ค.)</button>
+      <button class="ptb" id="tabCurrent" onclick="setPhase('current')">Current (มิ.ย.)</button>
+    </div>
+    <div class="sep"></div>
+    <label>เดือน</label>
+    <select id="fMonth" onchange="render()">
+      <option value="">ทุกเดือน</option>
+      <option value="2026-02">ก.พ. 69</option><option value="2026-03">มี.ค. 69</option>
+      <option value="2026-04">เม.ย. 69</option><option value="2026-05">พ.ค. 69</option>
+      <option value="2026-06">มิ.ย. 69</option>
+    </select>
+    <div class="sep"></div>
+    <label>AM</label>
+    <select id="fAM" onchange="render()">
+      <option value="">ทั้งหมด</option>
+      <option>นายณฤพนธ์ บุญเกื้อกุลวงษ์</option><option>นายนพพล ฤกษ์ประเสริฐกุล</option>
+      <option>นายบุญยวัฒน์ พุฒิเมธาพงศ์</option><option>นายปัญญากร รังษีธนะไพศาล</option>
+      <option>นายวิญญ์ วีรานุกูล</option><option>นายศุภณัฐ ปานเรือง</option>
+      <option>นายอัยยรัช สอดส่อง</option><option>นายอาทิตย์ จันทรี</option>
+      <option>นายเธียรวิชญ์ สิงหพันธุ์</option>
+    </select>
+    <label>ภาค</label>
+    <select id="fRegion" onchange="render()">
+      <option value="">ทั้งหมด</option>
+      <option>กรุงเทพฯ และปริมณฑล</option><option>ภาคกลาง</option>
+      <option>ภาคตะวันออก</option><option>ภาคตะวันออกเฉียงเหนือ</option>
+      <option>ภาคเหนือ</option><option>ภาคใต้</option>
+    </select>
+    <button class="rst" onclick="resetFilters()">ล้างตัวกรอง</button>
+  </div>
+
+  <!-- KPI 4 ตัวหลัก -->
+  <div class="krow">
+    <div class="kc green">
+      <div class="kl">ยอดขายรวม</div>
+      <div class="kv" id="kRev">—<span class="ku">฿</span></div>
+      <div class="ks" id="kRevSub">—</div>
+    </div>
+    <div class="kc blue">
+      <div class="kl">จำนวนชิ้น</div>
+      <div class="kv" id="kQty">—<span class="ku">ชิ้น</span></div>
+      <div id="kMoMBadge"></div>
+    </div>
+    <div class="kc amber">
+      <div class="kl">% บรรลุ Target</div>
+      <div class="kv" id="kTarget">—<span class="ku">%</span></div>
+      <div class="ks" id="kTargetSub">—</div>
+    </div>
+    <div class="kc red">
+      <div class="kl">สาขาที่ขายได้ vs ทั้งหมด</div>
+      <div class="kv" id="kContrib">—<span class="ku" style="font-size:16px" id="kContribOf"></span></div>
+      <div class="ks" id="kContribSub">—</div>
+    </div>
+  </div>
+
+  <!-- Row 1: Trend chart + Traffic light -->
+  <div class="top-row">
+    <div class="card">
+      <div class="stit">แนวโน้มยอดขายรายเดือน</div>
+      <div class="leg">
+        <span class="li"><span class="ld" style="background:#afa9ec"></span>Pilot 150ml</span>
+        <span class="li"><span class="ld" style="background:#7F77DD"></span>Pilot 500ml</span>
+        <span class="li"><span class="ld" style="background:#5DCAA5"></span>Current 150ml</span>
+        <span class="li"><span class="ld" style="background:#0F6E56"></span>Current 500ml</span>
+        <span class="li"><span style="display:inline-block;width:18px;height:2px;background:#BA7517;vertical-align:middle;margin-right:2px"></span>ยอดรวม</span>
+      </div>
+      <div style="position:relative;height:220px"><canvas id="trendChart" role="img" aria-label="กราฟแนวโน้มยอดขาย"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="stit">สถานะรายภาค (% vs Target) <span style="font-size:10px;color:var(--g5);text-transform:none;letter-spacing:0" id="tlPeriod"></span></div>
+      <div class="tl-grid" id="tlGrid"></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Top branches + AM performance -->
+  <div class="mid-row">
+    <div class="card">
+      <div class="stit">Top 15 สาขา ยอดขายสูงสุด</div>
+      <div class="leg">
+        <span class="li"><span class="ld" style="background:#5DCAA5"></span>150 ml.</span>
+        <span class="li"><span class="ld" style="background:#0F6E56"></span>500 ml.</span>
+      </div>
+      <div style="position:relative;height:320px"><canvas id="barChart" role="img" aria-label="Top 15 สาขา"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="stit">ประสิทธิภาพ AM</div>
+      <div class="tsc">
+        <table class="am-table">
+          <thead><tr><th>AM</th><th class="r">ชิ้น</th><th class="r">% Target</th><th class="r">สาขา</th></tr></thead>
+          <tbody id="amTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: MoM chart + NC branches -->
+  <div class="bot-row">
+    <div class="card">
+      <div class="stit">MoM % เปลี่ยนแปลงรายเดือน</div>
+      <div style="position:relative;height:200px"><canvas id="momChart" role="img" aria-label="MoM %"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="stit">สาขาไม่มียอดขาย <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0" id="ncPeriod"></span></div>
+      <div class="tsc">
+        <table>
+          <thead><tr><th>สาขา</th><th>AM</th><th class="r">Ticket</th><th class="r">สถานะ</th></tr></thead>
+          <tbody id="ncTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collapsible: detail table for AM -->
+  <button class="detail-toggle" onclick="toggleDetail()">
+    <span>📋 รายละเอียด Conversion Rate & MoM รายสาขา (สำหรับ AM)</span>
+    <span id="toggleIcon">▼ แสดง</span>
+  </button>
+  <div class="detail-body" id="detailBody">
     <div class="tsc">
       <table>
-        <thead><tr><th>#</th><th>สาขา</th><th>AM</th><th class="r">Ticket</th><th class="r">ชิ้น</th><th class="r">Conversion Rate</th><th class="r">MoM vs เดือนก่อน</th><th class="r">ยอดขาย (฿)</th></tr></thead>
+        <thead><tr><th>#</th><th>สาขา</th><th>AM</th><th class="r">Ticket</th><th class="r">ชิ้น</th><th class="r">CR%</th><th class="r">MoM</th><th class="r">ยอดขาย (฿)</th></tr></thead>
         <tbody id="crTable"></tbody>
       </table>
     </div>
   </div>
-</div>
 
-<div class="frow">
-  <div class="card">
-    <div class="ctit">สาขาไม่มียอดขาย <span class="bdg br" id="ncCount">—</span></div>
-    <div class="tsc">
-      <table>
-        <thead><tr><th>สาขา</th><th>AM</th><th class="r">Ticket</th><th class="r">สถานะ</th></tr></thead>
-        <tbody id="ncTable"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<div class="ft">BMF Cleaning Dashboard · FIT Auto · ก.พ.–มิ.ย. 2569 · สร้างโดย Claude AI</div>
+  <div class="footer">BMF Cleaning Executive Dashboard · FIT Auto · ก.พ.–มิ.ย. 2569 · สร้างโดย Claude AI</div>
 </main>
 
 <script>
@@ -217,9 +300,12 @@ const PM={'2026-02':'pilot','2026-03':'pilot','2026-04':'pilot','2026-05':'pilot
 const ML={'2026-02':'ก.พ. 69','2026-03':'มี.ค. 69','2026-04':'เม.ย. 69','2026-05':'พ.ค. 69','2026-06':'มิ.ย. 69'};
 const MONTHS=['2026-02','2026-03','2026-04','2026-05','2026-06'];
 let currentPhase='all';
-let bC,dC,rC,tC,mC;
+let bC,tC,mC;
 
 function fmt(n){return Number(n).toLocaleString('th-TH')}
+function shortAM(s){return s.replace('นาย','').replace('นาง','')}
+function tlClass(pct){return pct>=80?'green':pct>=50?'amber':'red'}
+function tlDot(pct){return`<span class="tl-dot ${tlClass(pct)}"></span>`}
 
 function setPhase(p){
   currentPhase=p;
@@ -234,6 +320,12 @@ function resetFilters(){
   ['fMonth','fAM','fRegion'].forEach(id=>document.getElementById(id).value='');
   setPhase('all');
 }
+function toggleDetail(){
+  const b=document.getElementById('detailBody');
+  const ic=document.getElementById('toggleIcon');
+  b.classList.toggle('open');
+  ic.textContent=b.classList.contains('open')?'▲ ซ่อน':'▼ แสดง';
+}
 function getFilt(){
   const am=document.getElementById('fAM').value;
   const rg=document.getElementById('fRegion').value;
@@ -243,39 +335,28 @@ function getFilt(){
 
 function render(){
   const data=getFilt();
+  const fMonth=document.getElementById('fMonth').value;
+  const actM=MONTHS.filter(m=>currentPhase==='all'||PM[m]===currentPhase);
 
-  // Aggregate by branch using correct field names
+  // Aggregate by branch
   const byB={};
   data.forEach(d=>{
-    if(!byB[d.plant])byB[d.plant]={name:d.name,AM:d.AM,region:d.region,qty:0,rev:0,q150:0,q500:0,ticket:0,mom_s:0,mom_c:0};
+    if(!byB[d.plant])byB[d.plant]={name:d.name,AM:d.AM,region:d.region,qty:0,rev:0,q150:0,q500:0,ticket:0,target:0,mom_s:0,mom_c:0};
     const b=byB[d.plant];
-    b.qty+=d.total_qty;
-    b.rev+=d.total_rev;
-    b.q150+=d.qty150;
-    b.q500+=d.qty500;
-    b.ticket+=d.ticket;
-    if(d.mom!==null&&d.mom!==undefined){b.mom_s+=d.mom;b.mom_c++;}
+    b.qty+=d.total_qty; b.rev+=d.total_rev; b.q150+=d.qty150; b.q500+=d.qty500;
+    b.ticket+=d.ticket; b.target+=d.target;
+    if(d.mom!=null){b.mom_s+=d.mom;b.mom_c++;}
   });
-  const brs=Object.entries(byB).map(([plant,b])=>({
-    plant,name:b.name,AM:b.AM,region:b.region,
-    qty:b.qty,rev:b.rev,q150:b.q150,q500:b.q500,ticket:b.ticket,
-    cr:b.ticket>0?Math.round(b.qty/b.ticket*1000)/10:0,
-    avg_mom:b.mom_c>0?Math.round(b.mom_s/b.mom_c*10)/10:null
-  }));
+  const brs=Object.values(byB);
   const contrib=brs.filter(b=>b.qty>0);
   const nc=brs.filter(b=>b.qty===0);
   const totalRev=brs.reduce((s,b)=>s+b.rev,0);
   const totalQty=brs.reduce((s,b)=>s+b.qty,0);
+  const totalTarget=contrib.reduce((s,b)=>s+b.target,0);
   const totalTicket=brs.reduce((s,b)=>s+b.ticket,0);
-  const qty150=brs.reduce((s,b)=>s+b.q150,0);
-  const qty500=brs.reduce((s,b)=>s+b.q500,0);
-  const avgCR=totalTicket>0?(totalQty/totalTicket*100).toFixed(1):0;
+  const targetPct=totalTarget>0?Math.round(totalQty/totalTarget*100):0;
 
-  // MoM KPI — คำนวณจากข้อมูลที่ filter แล้ว
-  const actM=MONTHS.filter(m=>currentPhase==='all'||PM[m]===currentPhase);
-  const fMonth=document.getElementById('fMonth').value;
-
-  // หา qty รายเดือนจาก filtered data
+  // MoM for KPI badge
   const qtyByMonth={};
   actM.forEach(m=>{
     qtyByMonth[m]=ALL.filter(d=>{
@@ -284,117 +365,112 @@ function render(){
       return d.month===m&&(currentPhase==='all'||PM[d.month]===currentPhase)&&(!am||d.AM===am)&&(!rg||d.region===rg);
     }).reduce((s,d)=>s+d.total_qty,0);
   });
-
-  let lastMoM=null;
-  let prevLabel='เดือนก่อน';
+  let lastMoM=null,prevLabel='เดือนก่อน';
   if(fMonth){
     const mi=actM.indexOf(fMonth);
-    if(mi>0){
-      const prev=actM[mi-1];
-      prevLabel=ML[prev];
-      if(qtyByMonth[prev]>0) lastMoM=Math.round((qtyByMonth[fMonth]-qtyByMonth[prev])/qtyByMonth[prev]*1000)/10;
-    }
+    if(mi>0){prevLabel=ML[actM[mi-1]];if(qtyByMonth[actM[mi-1]]>0)lastMoM=Math.round((qtyByMonth[fMonth]-qtyByMonth[actM[mi-1]])/qtyByMonth[actM[mi-1]]*10)/10;}
   } else if(actM.length>=2){
-    const last=actM[actM.length-1];
-    const prev=actM[actM.length-2];
-    prevLabel=ML[prev];
-    if(qtyByMonth[prev]>0) lastMoM=Math.round((qtyByMonth[last]-qtyByMonth[prev])/qtyByMonth[prev]*1000)/10;
+    prevLabel=ML[actM[actM.length-2]];
+    if(qtyByMonth[actM[actM.length-2]]>0)lastMoM=Math.round((qtyByMonth[actM[actM.length-1]]-qtyByMonth[actM[actM.length-2]])/qtyByMonth[actM[actM.length-2]]*10)/10;
   }
 
   // KPIs
-  document.getElementById('kRev').textContent=fmt(totalRev);
+  document.getElementById('kRev').innerHTML=fmt(totalRev)+'<span class="ku">฿</span>';
+  document.getElementById('kRevSub').textContent=totalQty+' ชิ้น รวมทุกสาขา';
   document.getElementById('kQty').innerHTML=fmt(totalQty)+'<span class="ku">ชิ้น</span>';
-  document.getElementById('kQtySub').textContent='150ml: '+qty150+' | 500ml: '+qty500;
-  document.getElementById('kContrib').textContent=contrib.length;
-  document.getElementById('kContribSub').textContent='จาก '+brs.length+' สาขา ('+Math.round(contrib.length/Math.max(brs.length,1)*100)+'%)';
-  document.getElementById('kNC').textContent=nc.length;
-  document.getElementById('kNCSub').textContent=Math.round(nc.length/Math.max(brs.length,1)*100)+'% ของทั้งหมด';
-  document.getElementById('kCR').innerHTML=avgCR+'<span class="ku">%</span>';
-  const mEl=document.getElementById('kMoM');
-  if(lastMoM!=null){mEl.innerHTML=(lastMoM>0?'<span class="mu">↑':'<span class="md">↓')+Math.abs(lastMoM).toFixed(1)+'%</span>';} else {mEl.textContent='—';}
-  document.getElementById('kMoMSub').textContent='vs '+prevLabel;
+  const mbEl=document.getElementById('kMoMBadge');
+  if(lastMoM!=null){
+    const cls=lastMoM>=0?'kb-g':'kb-r';
+    mbEl.innerHTML=`<span class="kbadge ${cls}">${lastMoM>=0?'↑':'↓'}${Math.abs(lastMoM).toFixed(1)}% vs ${prevLabel}</span>`;
+  } else mbEl.innerHTML='';
+  document.getElementById('kTarget').innerHTML=targetPct+'<span class="ku">%</span>';
+  document.getElementById('kTargetSub').textContent=`${totalQty} จาก ${totalTarget} ชิ้น (เป้า)`;
+  document.getElementById('kContrib').innerHTML=contrib.length+'<span class="ku" style="font-size:16px"> / '+brs.length+' สาขา</span>';
+  document.getElementById('kContribSub').textContent=`ไม่มียอด: ${nc.length} สาขา (${Math.round(nc.length/Math.max(brs.length,1)*100)}%)`;
 
-  // Donut
-  const p150p=totalQty?Math.round(qty150/totalQty*100):0;
-  document.getElementById('p150pct').textContent=p150p+'%';
-  document.getElementById('p500pct').textContent=(100-p150p)+'%';
-  document.getElementById('p150qty').textContent=qty150+' ชิ้น';
-  document.getElementById('p500qty').textContent=qty500+' ชิ้น';
-  if(dC)dC.destroy();
-  dC=new Chart(document.getElementById('donutChart'),{
-    type:'doughnut',
-    data:{labels:['150 ml.','500 ml.'],datasets:[{data:[qty150,qty500],backgroundColor:['#5DCAA5','#0F6E56'],borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw} ชิ้น`}}}}
+  // Summary bar
+  const periodLabel=fMonth?ML[fMonth]:(currentPhase==='pilot'?'Pilot (ก.พ.–พ.ค.)':currentPhase==='current'?'มิ.ย. 69':'ก.พ.–มิ.ย. 69');
+  const momStr=lastMoM!=null?`<span class="${lastMoM>=0?'mu':'md'}">${lastMoM>=0?'↑':'↓'}${Math.abs(lastMoM).toFixed(1)}% vs ${prevLabel}</span>`:''
+  document.getElementById('summaryText').innerHTML=`<strong>${periodLabel}</strong> <span class="sum-sep">·</span> ยอดขาย <strong>${fmt(totalQty)} ชิ้น</strong> <span class="sum-sep">·</span> มูลค่า <strong>฿${fmt(totalRev)}</strong> <span class="sum-sep">·</span> บรรลุเป้า <strong>${targetPct}%</strong> <span class="sum-sep">·</span> ${contrib.length}/${brs.length} สาขาขายได้ ${momStr?`<span class="sum-sep">·</span> ${momStr}`:''}`;
+
+  // Traffic light by region
+  const regMap={};
+  data.forEach(d=>{
+    if(!d.region)return;
+    if(!regMap[d.region])regMap[d.region]={qty:0,target:0,contrib:0,total:0,ticket:0};
+    regMap[d.region].qty+=d.total_qty; regMap[d.region].target+=d.target;
+    regMap[d.region].ticket+=d.ticket; regMap[d.region].total++;
+    if(d.has_sell)regMap[d.region].contrib++;
   });
+  const periodStr=fMonth?ML[fMonth]:(currentPhase==='current'?'มิ.ย. 69':'ก.พ.–มิ.ย. 69');
+  document.getElementById('tlPeriod').textContent='('+periodStr+')';
+  document.getElementById('ncPeriod').textContent='('+periodStr+')';
+  const shortReg=r=>r.replace('กรุงเทพฯ และปริมณฑล','BKK & ปริมณฑล').replace('ภาคตะวันออกเฉียงเหนือ','ภาคอีสาน');
+  document.getElementById('tlGrid').innerHTML=Object.entries(regMap).sort((a,b)=>b[1].qty-a[1].qty).map(([reg,v])=>{
+    const pct=v.target>0?Math.round(v.qty/v.target*100):0;
+    const cls=tlClass(pct);
+    const barColor=cls==='green'?'#2db88a':cls==='amber'?'#f59e0b':'#ef4444';
+    return`<div class="tl-row ${cls}">
+      ${tlDot(pct)}
+      <div><div class="tl-name">${shortReg(reg)}</div><div class="tl-sub">${v.contrib}/${Math.round(v.total/Math.max(actM.filter(m=>(!fMonth||m===fMonth)&&(currentPhase==='all'||PM[m]===currentPhase)).length,1))} สาขา</div></div>
+      <div class="tl-bar-wrap"><div class="tl-bar" style="width:${Math.min(pct,100)}%;background:${barColor}"></div></div>
+      <div class="tl-pct ${cls}">${pct}%</div>
+    </div>`;
+  }).join('');
 
-  // Bar top15 — ใช้ q150/q500 ที่ aggregate แล้ว
+  // Bar chart top 15
   const top15=contrib.sort((a,b)=>b.qty-a.qty).slice(0,15);
-  document.getElementById('branchCount').textContent=contrib.length+' สาขา';
-  document.getElementById('crCount').textContent=contrib.length+' สาขา';
   if(bC)bC.destroy();
   bC=new Chart(document.getElementById('barChart'),{
     type:'bar',
-    data:{
-      labels:top15.map(b=>b.name.length>16?b.name.slice(0,16)+'…':b.name),
-      datasets:[
-        {label:'150 ml.',data:top15.map(b=>b.q150),backgroundColor:'#5DCAA5',borderWidth:0},
-        {label:'500 ml.',data:top15.map(b=>b.q500),backgroundColor:'#0F6E56',borderWidth:0}
-      ]
-    },
-    options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    data:{labels:top15.map(b=>b.name.length>16?b.name.slice(0,16)+'…':b.name),
+    datasets:[
+      {label:'150 ml.',data:top15.map(b=>b.q150),backgroundColor:'#5DCAA5',borderWidth:0},
+      {label:'500 ml.',data:top15.map(b=>b.q500),backgroundColor:'#0F6E56',borderWidth:0}
+    ]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} ชิ้น`}}},
-      scales:{
-        x:{stacked:true,min:0,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10},precision:0}},
-        y:{stacked:true,ticks:{font:{size:9},color:'#555'}}
-      }
-    }
+      scales:{x:{stacked:true,min:0,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10},precision:0}},
+               y:{stacked:true,ticks:{font:{size:9},color:'#555'}}}}
   });
 
-  // Region
-  const rgMap={};
-  data.forEach(d=>{if(!rgMap[d.region])rgMap[d.region]=0;rgMap[d.region]+=d.total_rev;});
-  const rE=Object.entries(rgMap).sort((a,b)=>b[1]-a[1]);
-  if(rC)rC.destroy();
-  rC=new Chart(document.getElementById('regionChart'),{
-    type:'bar',
-    data:{labels:rE.map(([k])=>k.replace('กรุงเทพฯ และปริมณฑล','BKK').replace('ภาคตะวันออกเฉียงเหนือ','อีสาน')),
-    datasets:[{data:rE.map(([,v])=>v),backgroundColor:'#1a8c6a',borderWidth:0,borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{ticks:{font:{size:8}}},y:{ticks:{font:{size:9},callback:v=>v>=1000?(v/1000).toFixed(0)+'K':v}}}}
+  // AM table
+  const amMap={};
+  data.forEach(d=>{
+    if(!d.AM)return;
+    if(!amMap[d.AM])amMap[d.AM]={qty:0,target:0,contrib:new Set(),total:new Set()};
+    amMap[d.AM].qty+=d.total_qty; amMap[d.AM].target+=d.target;
+    amMap[d.AM].total.add(d.plant);
+    if(d.has_sell)amMap[d.AM].contrib.add(d.plant);
   });
+  document.getElementById('amTable').innerHTML=Object.entries(amMap).sort((a,b)=>b[1].qty-a[1].qty).map(([am,v])=>{
+    const pct=v.target>0?Math.round(v.qty/v.target*100):0;
+    const cls=tlClass(pct);
+    const barColor=cls==='green'?'#2db88a':cls==='amber'?'#f59e0b':'#ef4444';
+    const dot=`<span class="tl-dot ${cls}" style="display:inline-block;margin-right:5px;vertical-align:middle"></span>`;
+    return`<tr><td>${dot}<span style="font-size:11px">${shortAM(am)}</span></td><td class="r" style="font-weight:600">${v.qty}</td><td class="r"><div style="display:flex;align-items:center;justify-content:flex-end;gap:5px"><div class="prog"><div class="prog-fill" style="width:${Math.min(pct,100)}%;background:${barColor}"></div></div><span style="font-size:11px;font-weight:600;color:${cls==='red'?'var(--rd)':cls==='amber'?'var(--am)':'var(--td)'}">${pct}%</span></div></td><td class="r" style="font-size:11px">${v.contrib.size}/${v.total.size}</td></tr>`;
+  }).join('');
 
-  // Trend chart (mixed bar+line)
+  // Trend chart
   const filtM=MONTHS.filter(m=>(currentPhase==='all'||PM[m]===currentPhase)&&(!fMonth||m===fMonth));
   const mData=filtM.map(m=>{
     const rows=data.filter(d=>d.month===m);
-    return{m,
-      q150:rows.reduce((s,d)=>s+d.qty150,0),
-      q500:rows.reduce((s,d)=>s+d.qty500,0),
-      total:rows.reduce((s,d)=>s+d.total_qty,0)
-    };
+    return{m,q150:rows.reduce((s,d)=>s+d.qty150,0),q500:rows.reduce((s,d)=>s+d.qty500,0),total:rows.reduce((s,d)=>s+d.total_qty,0)};
   });
   const bg150=filtM.map(m=>PM[m]==='pilot'?'#afa9ec':'#5DCAA5');
   const bg500=filtM.map(m=>PM[m]==='pilot'?'#7F77DD':'#0F6E56');
   if(tC)tC.destroy();
   tC=new Chart(document.getElementById('trendChart'),{
     type:'bar',
-    data:{
-      labels:filtM.map(m=>ML[m]),
-      datasets:[
-        {type:'bar',label:'150 ml.',data:mData.map(x=>x.q150),backgroundColor:bg150,stack:'s',borderWidth:0,order:2},
-        {type:'bar',label:'500 ml.',data:mData.map(x=>x.q500),backgroundColor:bg500,stack:'s',borderWidth:0,order:2},
-        {type:'line',label:'ยอดรวม',data:mData.map(x=>x.total),borderColor:'#BA7517',borderWidth:2.5,pointBackgroundColor:'#BA7517',pointRadius:5,tension:0.3,fill:false,order:1,yAxisID:'y'}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
+    data:{labels:filtM.map(m=>ML[m]),datasets:[
+      {type:'bar',label:'150 ml.',data:mData.map(x=>x.q150),backgroundColor:bg150,stack:'s',borderWidth:0,order:2},
+      {type:'bar',label:'500 ml.',data:mData.map(x=>x.q500),backgroundColor:bg500,stack:'s',borderWidth:0,order:2},
+      {type:'line',label:'ยอดรวม',data:mData.map(x=>x.total),borderColor:'#BA7517',borderWidth:2.5,pointBackgroundColor:'#BA7517',pointRadius:5,tension:0.3,fill:false,order:1,yAxisID:'y'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} ชิ้น`}}},
-      scales:{
-        x:{stacked:true,ticks:{font:{size:11},autoSkip:false},grid:{display:false}},
-        y:{stacked:true,ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}}
-      }
-    }
+      scales:{x:{stacked:true,ticks:{font:{size:11},autoSkip:false},grid:{display:false}},
+               y:{stacked:true,ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}}}}
   });
 
   // MoM chart
@@ -402,36 +478,29 @@ function render(){
   if(mC)mC.destroy();
   mC=new Chart(document.getElementById('momChart'),{
     type:'bar',
-    data:{labels:filtM.map(m=>ML[m]),datasets:[{
-      label:'MoM %',data:momVals,
-      backgroundColor:momVals.map(v=>v===null?'#e8e8e8':v>=0?'rgba(26,140,106,.8)':'rgba(217,64,64,.8)'),
-      borderRadius:4,borderWidth:0
-    }]},
+    data:{labels:filtM.map(m=>ML[m]),datasets:[{label:'MoM %',data:momVals,
+      backgroundColor:momVals.map(v=>v===null?'#e8e8e8':v>=0?'rgba(26,140,106,.8)':'rgba(197,48,48,.8)'),
+      borderRadius:5,borderWidth:0}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw===null?' ไม่มีข้อมูล':` ${ctx.raw>0?'↑':'↓'}${Math.abs(ctx.raw).toFixed(1)}%`}}},
-      scales:{
-        x:{ticks:{font:{size:11},autoSkip:false},grid:{display:false}},
-        y:{ticks:{font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'},
-           afterDataLimits:ax=>{const mx=Math.max(...momVals.filter(v=>v!==null).map(Math.abs),10);ax.min=-mx*1.2;ax.max=mx*1.2;}}
-      }
-    }
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw===null?' ไม่มีข้อมูล':` ${ctx.raw>=0?'↑':'↓'}${Math.abs(ctx.raw).toFixed(1)}%`}}},
+      scales:{x:{ticks:{font:{size:11},autoSkip:false},grid:{display:false}},
+               y:{ticks:{font:{size:10},callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'},
+                  afterDataLimits:ax=>{const mx=Math.max(...momVals.filter(v=>v!=null).map(Math.abs),10);ax.min=-mx*1.2;ax.max=mx*1.2;}}}}
   });
 
-  // CR table
-  const crS=contrib.sort((a,b)=>b.qty-a.qty);
-  document.getElementById('crTable').innerHTML=crS.map((b,i)=>{
-    const bw=Math.min(b.cr*5,100);
-    const mc=b.avg_mom!=null?(b.avg_mom>0?`<span class="mu">↑${Math.abs(b.avg_mom).toFixed(1)}%</span>`:`<span class="md">↓${Math.abs(b.avg_mom).toFixed(1)}%</span>`):'<span class="mn">—</span>';
-    return `<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${b.AM.replace('นาย','').replace('นาง','')}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;min-width:32px;text-align:right;color:${b.cr>=5?'var(--td)':b.cr>=2?'var(--g9)':'var(--rd)'}">${b.cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">฿${fmt(b.rev)}</td></tr>`;
-  }).join('');
-
   // NC table
-  document.getElementById('ncCount').textContent=nc.length+' สาขา';
   document.getElementById('ncTable').innerHTML=nc.length===0
-    ?'<tr><td colspan="4" style="text-align:center;color:var(--g5);padding:16px">ไม่มีสาขาที่ไม่มียอดขาย</td></tr>'
-    :nc.sort((a,b)=>b.ticket-a.ticket).map(b=>`<tr><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${b.AM.replace('นาย','').replace('นาง','')}</td><td class="r">${fmt(b.ticket)}</td><td class="r"><span class="pill pr">ไม่มียอด</span></td></tr>`).join('');
+    ?'<tr><td colspan="4" style="text-align:center;color:var(--g5);padding:14px">ไม่มีสาขาที่ไม่มียอดขาย 🎉</td></tr>'
+    :nc.sort((a,b)=>b.ticket-a.ticket).map(b=>`<tr><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${shortAM(b.AM)}</td><td class="r">${fmt(b.ticket)}</td><td class="r"><span class="pill pr">ไม่มียอด</span></td></tr>`).join('');
 
-
+  // CR detail table (collapsible)
+  document.getElementById('crTable').innerHTML=contrib.sort((a,b)=>b.qty-a.qty).map((b,i)=>{
+    const cr=b.ticket>0?Math.round(b.qty/b.ticket*1000)/10:0;
+    const bw=Math.min(cr*5,100);
+    const avgMoM=b.mom_c>0?Math.round(b.mom_s/b.mom_c*10)/10:null;
+    const mc=avgMoM!=null?(avgMoM>0?`<span class="mu">↑${Math.abs(avgMoM).toFixed(1)}%</span>`:`<span class="md">↓${Math.abs(avgMoM).toFixed(1)}%</span>`):'—';
+    return`<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${shortAM(b.AM)}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;color:${cr>=5?'var(--td)':cr>=2?'var(--g9)':'var(--rd)'}">${cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">฿${fmt(b.rev)}</td></tr>`;
+  }).join('');
 }
 render();
 </script>
