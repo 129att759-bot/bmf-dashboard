@@ -137,7 +137,41 @@ tbody tr:hover{background:var(--g1)}
 .cbf{height:5px;border-radius:3px;background:var(--tl)}
 
 .footer{text-align:center;font-size:11px;color:var(--g5);margin-top:32px;padding-top:16px;border-top:1px solid var(--g3)}
-@media(max-width:1000px){.krow,.top-row,.mid-row,.bot-row{grid-template-columns:1fr}}
+
+/* Tablet */
+@media(max-width:1000px){
+  .top-row,.mid-row,.bot-row{grid-template-columns:1fr}
+  .krow{grid-template-columns:repeat(3,1fr)!important}
+}
+
+/* Mobile */
+@media(max-width:640px){
+  .main{padding:12px 10px 32px}
+  .hdr-inner{padding:10px 12px;flex-wrap:wrap;gap:6px}
+  .ht{font-size:13px}
+  .hs{font-size:10px}
+  .hr-info{display:none}
+  .logo img{height:36px!important;width:36px!important}
+  .fb{padding:8px 10px;gap:7px}
+  .fb select{font-size:11px;padding:4px 7px;max-width:140px}
+  .fb label{font-size:11px}
+  .ptb{font-size:11px;padding:4px 10px}
+  .krow{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+  .krow>.kc:last-child:nth-child(odd){grid-column:1/-1}
+  .kc{padding:11px 12px}
+  .kl{font-size:10px;letter-spacing:.3px}
+  .kv{font-size:20px}
+  .ku{font-size:12px}
+  .ks{font-size:11px;margin-top:3px}
+  .kbadge{font-size:10px;padding:2px 5px}
+  .sum-card{padding:7px 12px!important}
+  .top-row,.mid-row,.bot-row{grid-template-columns:1fr}
+  .card{padding:12px 10px}
+  .stit{font-size:10px}
+  .tsc{max-height:260px}
+  table,thead th,tbody td{font-size:11px}
+  .am-table{font-size:11px}
+}
 </style>
 </head>
 <body>
