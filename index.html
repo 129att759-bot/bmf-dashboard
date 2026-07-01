@@ -516,15 +516,23 @@ function render(){
   tC=new Chart(document.getElementById('trendChart'),{
     type:'bar',
     data:{labels:filtM.map(m=>ML[m]),datasets:[
-      {type:'bar',label:'150 ml.',data:mData.map(x=>x.q150),backgroundColor:bg150,stack:'s',borderWidth:0,order:2},
-      {type:'bar',label:'500 ml.',data:mData.map(x=>x.q500),backgroundColor:bg500,stack:'s',borderWidth:0,order:2},
+      {type:'bar',label:'150 ml.',data:mData.map(x=>x.q150),backgroundColor:bg150,stack:'s',borderWidth:0,order:2,
+        datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>0,anchor:'center',align:'center',
+          color:'#fff',font:{size:11,weight:'400'},formatter:v=>v}},
+      {type:'bar',label:'500 ml.',data:mData.map(x=>x.q500),backgroundColor:bg500,stack:'s',borderWidth:0,order:2,
+        datalabels:{display:ctx=>ctx.dataset.data[ctx.dataIndex]>0,anchor:'center',align:'center',
+          color:'#fff',font:{size:11,weight:'400'},formatter:v=>v}},
       {type:'line',label:'ยอดรวม',data:mData.map(x=>x.total),borderColor:'#BA7517',borderWidth:2.5,pointBackgroundColor:'#BA7517',pointRadius:5,tension:0.3,fill:false,order:1,yAxisID:'y',
-        datalabels:{display:true,anchor:'end',align:'top',color:'#BA7517',font:{size:10,weight:'600'},formatter:v=>v}}
+        datalabels:{display:true,anchor:'end',align:'top',offset:6,color:'#BA7517',
+          font:{size:11,weight:'400'},formatter:v=>v,
+          textStrokeColor:'rgba(255,255,255,0.8)',textStrokeWidth:3}}
     ]},
     options:{responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:28}},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw} ชิ้น`}}},
       scales:{x:{stacked:true,ticks:{font:{size:11},autoSkip:false},grid:{display:false}},
-               y:{stacked:true,ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}}}}
+               y:{stacked:true,ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.05)'},
+                  grace:'15%'}}}
   });
 
   // MoM chart
