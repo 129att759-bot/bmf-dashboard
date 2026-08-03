@@ -465,7 +465,7 @@ function render(){
   document.getElementById('kContribSub').textContent=`ไม่มียอด: ${nc.length} สาขา (${Math.round(nc.length/Math.max(brs.length,1)*100)}%)`;
 
   // Summary bar
-  const periodLabel=fMonth?ML[fMonth]:(currentPhase==='pilot'?'Pilot (ก.พ.–พ.ค.)':currentPhase==='current'?'มิ.ย.–ก.ค. 69':'ก.พ.–มิ.ย. 69');
+  const periodLabel=fMonth?ML[fMonth]:(currentPhase==='pilot'?'Pilot (ก.พ.–พ.ค.)':currentPhase==='current'?'มิ.ย.–ก.ค. 69':'ก.พ.–ก.ค. 69');
   const momStr=lastMoM!=null?`<span class="${lastMoM>=0?'mu':'md'}">${lastMoM>=0?'↑':'↓'}${Math.abs(lastMoM).toFixed(1)}% vs ${prevLabel}</span>`:''
   const bmPairs=data.filter(d=>d.has_sell===1).length;
   const avgQty=bmPairs>0?(totalQty/bmPairs).toFixed(1):0;
@@ -486,7 +486,7 @@ function render(){
     regMap[d.region].ticket+=d.ticket; regMap[d.region].total++;
     if(d.has_sell)regMap[d.region].contrib++;
   });
-  const periodStr=fMonth?ML[fMonth]:(currentPhase==='current'?'มิ.ย.–ก.ค. 69':'ก.พ.–มิ.ย. 69');
+  const periodStr=fMonth?ML[fMonth]:(currentPhase==='current'?'มิ.ย.–ก.ค. 69':'ก.พ.–ก.ค. 69');
   document.getElementById('tlPeriod').textContent='('+periodStr+')';
   document.getElementById('ncPeriod').textContent='('+periodStr+')';
   const shortReg=r=>r.replace('กรุงเทพฯ และปริมณฑล','BKK & ปริมณฑล').replace('ภาคตะวันออกเฉียงเหนือ','ภาคอีสาน');
