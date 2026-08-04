@@ -6,8 +6,6 @@
 <title>รายงานยอดขายบริการล้างห้องเครื่อง (BMF Cleaning)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -188,10 +186,6 @@ tbody tr:hover{background:var(--g1)}
       </div>
     </div>
     <div class="hr-info">อัปเดตล่าสุด: 31 ก.ค. 2569<br>110 สาขาทั่วประเทศ</div>
-    <button onclick="exportPDF()" id="pdfBtn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:white;font-family:'Sarabun',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M4 18h16v2H4z"/></svg>
-      Export PDF
-    </button>
   </div>
 </header>
 
@@ -647,31 +641,7 @@ function render(){
     return`<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${shortAM(b.AM)}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;color:${cr>=5?'var(--td)':cr>=2?'var(--g9)':'var(--rd)'}">${cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">฿${fmt(b.rev)}</td></tr>`;
   }).join('');
 }
-render();async function exportPDF(){
-  const btn=document.getElementById('pdfBtn');
-  const orig=btn.innerHTML;
-  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> กำลังสร้าง PDF...';
-  btn.disabled=true;
-  try{
-    btn.style.display='none';
-    const canvas=await html2canvas(document.body,{
-      scale:1.5,useCORS:true,logging:false,
-      windowWidth:1400,backgroundColor:'#f9fafb'
-    });
-    btn.style.display='';
-    const {jsPDF}=window.jspdf;
-    const imgW=canvas.width, imgH=canvas.height;
-    const pdfW=297;
-    const pdfH=Math.round(imgH*pdfW/imgW);
-    const pdf=new jsPDF({orientation:pdfH>pdfW?'portrait':'landscape',unit:'mm',format:[pdfW,pdfH]});
-    pdf.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,pdfW,pdfH);
-    pdf.save('BMF_Cleaning_Dashboard_31Jul2026.pdf');
-  } catch(e){
-    btn.style.display='';
-    alert('เกิดข้อผิดพลาด: '+e.message);
-  } finally{
-    btn.innerHTML=orig;
-    btn.disabled=false;
-  }
-}
-
+render();
+</script>
+</body>
+</html>
