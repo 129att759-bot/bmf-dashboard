@@ -6,6 +6,8 @@
 <title>รายงานยอดขายบริการล้างห้องเครื่อง (BMF Cleaning)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -186,6 +188,10 @@ tbody tr:hover{background:var(--g1)}
       </div>
     </div>
     <div class="hr-info">อัปเดตล่าสุด: 31 ก.ค. 2569<br>110 สาขาทั่วประเทศ</div>
+    <button onclick="exportPDF()" id="pdfBtn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:white;font-family:'Sarabun',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M4 18h16v2H4z"/></svg>
+      Export PDF
+    </button>
   </div>
 </header>
 
@@ -282,7 +288,7 @@ tbody tr:hover{background:var(--g1)}
       <div style="position:relative;height:220px"><canvas id="trendChart" role="img" aria-label="กราฟแนวโน้มยอดขาย"></canvas></div>
     </div>
     <div class="card">
-      <div class="stit">สถานะรายภาค (% vs Target) <span style="font-size:10px;color:var(--g5);text-transform:none;letter-spacing:0" id="tlPeriod"></span></div>
+      <div class="stit">% สาขาที่ Achieve Target <span style="font-size:10px;color:var(--g5);text-transform:none;letter-spacing:0" id="tlPeriod"></span></div>
       <div class="tl-grid" id="tlGrid"></div>
     </div>
   </div>
@@ -479,24 +485,33 @@ function render(){
 
   // Traffic light by region
   const regMap={};
+  const branchAgg={};
   data.forEach(d=>{
     if(!d.region)return;
-    if(!regMap[d.region])regMap[d.region]={qty:0,target:0,contrib:0,total:0,ticket:0};
+    if(!regMap[d.region])regMap[d.region]={qty:0,target:0,activeSet:new Set(),achieveSet:new Set(),ticket:0};
     regMap[d.region].qty+=d.total_qty; regMap[d.region].target+=d.target;
-    regMap[d.region].ticket+=d.ticket; regMap[d.region].total++;
-    if(d.has_sell)regMap[d.region].contrib++;
+    regMap[d.region].ticket+=d.ticket;
+    if(d.ticket>0){
+      regMap[d.region].activeSet.add(d.plant);
+      if(!branchAgg[d.plant])branchAgg[d.plant]={region:d.region,qty:0,target:0};
+      branchAgg[d.plant].qty+=d.total_qty;
+      branchAgg[d.plant].target+=d.target;
+    }
+  });
+  Object.entries(branchAgg).forEach(([plant,b])=>{
+    if(b.target>0&&b.qty>=b.target)regMap[b.region].achieveSet.add(plant);
   });
   const periodStr=fMonth?ML[fMonth]:(currentPhase==='current'?'มิ.ย.–ก.ค. 69':'ก.พ.–ก.ค. 69');
   document.getElementById('tlPeriod').textContent='('+periodStr+')';
   document.getElementById('ncPeriod').textContent='('+periodStr+')';
   const shortReg=r=>r.replace('กรุงเทพฯ และปริมณฑล','BKK & ปริมณฑล').replace('ภาคตะวันออกเฉียงเหนือ','ภาคอีสาน');
   document.getElementById('tlGrid').innerHTML=Object.entries(regMap).sort((a,b)=>b[1].qty-a[1].qty).map(([reg,v])=>{
-    const pct=v.target>0?Math.round(v.qty/v.target*100):0;
+    const pct=v.activeSet.size>0?Math.round(v.achieveSet.size/v.activeSet.size*100):0;
     const cls=tlClass(pct);
     const barColor=cls==='green'?'#2db88a':cls==='amber'?'#f59e0b':'#ef4444';
     return`<div class="tl-row ${cls}">
       ${tlDot(pct)}
-      <div><div class="tl-name">${shortReg(reg)}</div><div class="tl-sub">${v.contrib}/${Math.round(v.total/Math.max(actM.filter(m=>(!fMonth||m===fMonth)&&(currentPhase==='all'||PM[m]===currentPhase)).length,1))} สาขา</div></div>
+      <div><div class="tl-name">${shortReg(reg)}</div><div class="tl-sub">${v.achieveSet.size}/${v.activeSet.size} สาขา achieve</div></div>
       <div class="tl-bar-wrap"><div class="tl-bar" style="width:${Math.min(pct,100)}%;background:${barColor}"></div></div>
       <div class="tl-pct ${cls}">${pct}%</div>
     </div>`;
@@ -632,7 +647,31 @@ function render(){
     return`<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${shortAM(b.AM)}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;color:${cr>=5?'var(--td)':cr>=2?'var(--g9)':'var(--rd)'}">${cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">฿${fmt(b.rev)}</td></tr>`;
   }).join('');
 }
-render();
-</script>
-</body>
-</html>
+render();async function exportPDF(){
+  const btn=document.getElementById('pdfBtn');
+  const orig=btn.innerHTML;
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> กำลังสร้าง PDF...';
+  btn.disabled=true;
+  try{
+    btn.style.display='none';
+    const canvas=await html2canvas(document.body,{
+      scale:1.5,useCORS:true,logging:false,
+      windowWidth:1400,backgroundColor:'#f9fafb'
+    });
+    btn.style.display='';
+    const {jsPDF}=window.jspdf;
+    const imgW=canvas.width, imgH=canvas.height;
+    const pdfW=297;
+    const pdfH=Math.round(imgH*pdfW/imgW);
+    const pdf=new jsPDF({orientation:pdfH>pdfW?'portrait':'landscape',unit:'mm',format:[pdfW,pdfH]});
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,pdfW,pdfH);
+    pdf.save('BMF_Cleaning_Dashboard_31Jul2026.pdf');
+  } catch(e){
+    btn.style.display='';
+    alert('เกิดข้อผิดพลาด: '+e.message);
+  } finally{
+    btn.innerHTML=orig;
+    btn.disabled=false;
+  }
+}
+
