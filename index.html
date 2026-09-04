@@ -638,7 +638,7 @@ function render(){
     const bw=Math.min(cr*5,100);
     const avgMoM=b.mom_c>0?Math.round(b.mom_s/b.mom_c*10)/10:null;
     const mc=avgMoM!=null?(avgMoM>0?`<span class="mu">↑${Math.abs(avgMoM).toFixed(1)}%</span>`:`<span class="md">↓${Math.abs(avgMoM).toFixed(1)}%</span>`):'—';
-    return`<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${shortAM(b.AM)}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;color:${cr>=5?'var(--td)':cr>=2?'var(--g9)':'var(--rd)'}">${cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">฿${fmt(b.rev)}</td></tr>`;
+    return`<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${shortAM(b.AM)}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;color:${cr>=5?'var(--td)':cr>=2?'var(--g9)':'var(--rd)'}">${cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">${fmt(b.rev)}</td></tr>`;
   }).join('');
 }
 render();
