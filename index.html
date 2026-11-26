@@ -41,7 +41,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--g1);color:var(--g9);font-
 .main{max-width:1340px;margin:0 auto;padding:20px 24px 48px}
 
 /* Filter */
-.fb{background:white;border:1px solid var(--g3);border-radius:12px;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.fb{background:white;border:1px solid var(--g3);border-radius:12px;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:nowrap;overflow-x:auto;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.05);scrollbar-width:none}
+.fb::-webkit-scrollbar{display:none}
 .fb label{font-size:12px;color:var(--g5);font-weight:500}
 .fb select{font-family:'Sarabun',sans-serif;font-size:12px;padding:5px 10px;border:1px solid var(--g3);border-radius:8px;background:var(--g1);color:var(--g9);cursor:pointer;outline:none}
 .pt{display:flex;gap:5px}
@@ -230,7 +231,7 @@ tbody tr:hover{background:var(--g1)}
       <option>ภาคเหนือ</option><option>ภาคใต้</option>
     </select>
     <label>สาขา</label>
-    <select id="fBranch" onchange="render()" style="min-width:200px;max-width:280px">
+    <select id="fBranch" onchange="render()" style="max-width:220px">
       <option value="">ทั้งหมด</option>
     </select>
     <button class="rst" onclick="resetFilters()">ล้างตัวกรอง</button>
