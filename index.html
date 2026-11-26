@@ -210,7 +210,7 @@ tbody tr:hover{background:var(--g1)}
     </select>
     <div class="sep"></div>
     <label>AM</label>
-    <select id="fAM" onchange="render()">
+    <select id="fAM" onchange="updateBranchOptions();render()">
       <option value="">ทั้งหมด</option>
       <option>นายณฤพนธ์ บุญเกื้อกุลวงษ์</option>
       <option>นายนพพล ฤกษ์ประเสริฐกุล</option>
@@ -223,11 +223,15 @@ tbody tr:hover{background:var(--g1)}
       <option>นายเธียรวิชญ์ สิงหพันธุ์</option>
     </select>
     <label>ภาค</label>
-    <select id="fRegion" onchange="render()">
+    <select id="fRegion" onchange="updateBranchOptions();render()">
       <option value="">ทั้งหมด</option>
       <option>กรุงเทพฯ และปริมณฑล</option><option>ภาคกลาง</option>
       <option>ภาคตะวันออก</option><option>ภาคตะวันออกเฉียงเหนือ</option>
       <option>ภาคเหนือ</option><option>ภาคใต้</option>
+    </select>
+    <label>สาขา</label>
+    <select id="fBranch" onchange="render()" style="min-width:200px;max-width:280px">
+      <option value="">ทั้งหมด</option>
     </select>
     <button class="rst" onclick="resetFilters()">ล้างตัวกรอง</button>
   </div>
@@ -366,17 +370,43 @@ function setPhase(p){
 }
 function resetFilters(){
   currentPhase='all';
-  ['fMonth','fAM','fRegion'].forEach(id=>document.getElementById(id).value='');
+  ['fMonth','fAM','fRegion','fBranch'].forEach(id=>document.getElementById(id).value='');
+  updateBranchOptions();
   setPhase('all');
+}
+function updateBranchOptions(){
+  const am=document.getElementById('fAM').value;
+  const rg=document.getElementById('fRegion').value;
+  const sel=document.getElementById('fBranch');
+  const prev=sel.value;
+  // สร้าง unique branch list จาก ALL ที่ตรงกับ AM/ภาคที่เลือก
+  const seen=new Map();
+  ALL.forEach(d=>{
+    if(am && d.AM!==am) return;
+    if(rg && d.region!==rg) return;
+    if(!seen.has(d.plant)) seen.set(d.plant, d.name.replace(/^L\d+\s+FIT Auto\s+สาขา\s*/,'').replace(/^FIT Auto\s+สาขา\s*/,''));
+  });
+  const branches=[...seen.entries()].sort((a,b)=>a[0].localeCompare(b[0]));
+  sel.innerHTML='<option value="">ทั้งหมด</option>';
+  branches.forEach(([plant,name])=>{
+    const opt=document.createElement('option');
+    opt.value=plant;
+    opt.textContent=plant+' '+name;
+    sel.appendChild(opt);
+  });
+  // คืนค่าที่เลือกไว้ถ้ายังอยู่ใน list
+  if(prev && seen.has(prev)) sel.value=prev; else sel.value='';
 }
 function getFilt(){
   const am=document.getElementById('fAM').value;
   const rg=document.getElementById('fRegion').value;
   const mn=document.getElementById('fMonth').value;
+  const br=document.getElementById('fBranch').value;
   return ALL.filter(d=>{
     if(am && d.AM!==am) return false;
     if(rg && d.region!==rg) return false;
     if(mn && d.month!==mn) return false;
+    if(br && d.plant!==br) return false;
     // filter by phase — ทั้ง month และ branch ต้องอยู่ใน phase นั้น
     if(currentPhase==='pilot'){
       if(!['2026-02','2026-03','2026-04','2026-05'].includes(d.month)) return false;
@@ -419,7 +449,8 @@ function render(){
     qtyByMonth[m]=ALL.filter(d=>{
       const am=document.getElementById('fAM').value;
       const rg=document.getElementById('fRegion').value;
-      return d.month===m&&(currentPhase==='all'||PM[d.month]===currentPhase)&&(!am||d.AM===am)&&(!rg||d.region===rg);
+      const br=document.getElementById('fBranch').value;
+      return d.month===m&&(currentPhase==='all'||PM[d.month]===currentPhase)&&(!am||d.AM===am)&&(!rg||d.region===rg)&&(!br||d.plant===br);
     }).reduce((s,d)=>s+d.total_qty,0);
   });
   let lastMoM=null,prevLabel='เดือนก่อน';
@@ -437,7 +468,8 @@ function render(){
     contribCountByMonth[m]=ALL.filter(d=>{
       const am=document.getElementById('fAM').value;
       const rg=document.getElementById('fRegion').value;
-      return d.month===m&&(currentPhase==='all'||PM[d.month]===currentPhase)&&(!am||d.AM===am)&&(!rg||d.region===rg)&&d.has_sell===1;
+      const br=document.getElementById('fBranch').value;
+      return d.month===m&&(currentPhase==='all'||PM[d.month]===currentPhase)&&(!am||d.AM===am)&&(!rg||d.region===rg)&&(!br||d.plant===br)&&d.has_sell===1;
     }).length;
   });
   const avgQtyByMonth={};
@@ -588,6 +620,7 @@ function render(){
   // ดึง qty ทุกเดือน (ไม่จำกัด filtM) เพื่อให้หาเดือนก่อนหน้าได้เสมอ
   const am=document.getElementById('fAM').value;
   const rg=document.getElementById('fRegion').value;
+  const br=document.getElementById('fBranch').value;
   const allQtyByMonth={};
   // คำนวณ qty ทุกเดือนสำหรับ MoM
   // current phase: ให้ดึง พ.ค. จากสาขา current ทั้งหมดด้วย เพื่อเปรียบเทียบ
@@ -596,6 +629,7 @@ function render(){
       if(d.month!==m) return false;
       if(am && d.AM!==am) return false;
       if(rg && d.region!==rg) return false;
+      if(br && d.plant!==br) return false;
       if(currentPhase==='pilot'){
         if(!['2026-02','2026-03','2026-04','2026-05'].includes(d.month)) return false;
         if(!PILOT_PLANTS.has(d.plant)) return false;
@@ -641,6 +675,7 @@ function render(){
     return`<tr><td><span class="rnk">${i+1}</span></td><td style="font-size:11px">${b.name}</td><td style="font-size:10px;color:var(--g5)">${shortAM(b.AM)}</td><td class="r">${fmt(b.ticket)}</td><td class="r">${b.qty}</td><td class="r"><div class="cbw"><div class="cbb"><div class="cbf" style="width:${bw}%"></div></div><span style="font-size:11px;color:${cr>=5?'var(--td)':cr>=2?'var(--g9)':'var(--rd)'}">${cr.toFixed(1)}%</span></div></td><td class="r">${mc}</td><td class="r">${fmt(b.rev)}</td></tr>`;
   }).join('');
 }
+updateBranchOptions();
 render();
 </script>
 </body>
